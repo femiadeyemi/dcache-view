@@ -35,30 +35,33 @@
     app.ls = function(path)
     {
         app.$.homedir.innerHTML = "";
-        app.$.selectedTitle.querySelector("#pagination").innerHTML = "";
-        const elRoot = new PaginationButton("Root", "/");
-        if ( path == "/" || path == null || path == undefined || path.type == 'tap') {
-            elRoot.querySelector('a').classList.add("active");
-            app.$.selectedTitle.querySelector("#pagination").appendChild(elRoot);
-            path = '/';
-        } else {
-            elRoot.querySelector('a').classList.remove("active");
-            app.$.selectedTitle.querySelector("#pagination").appendChild(elRoot);
-            const dirNames = path.split("/");
-            let pt =  "";
-            for (let i = 1; i < dirNames.length; i++) {
-                pt += "/" + dirNames[i];
-                const el = new PaginationButton(dirNames[i], pt);
-                el.querySelector('a').classList.remove("active");
-                if ( i == (dirNames.length-1) ) {
-                    el.querySelector('a').classList.add("active");
-                }
-                app.$.selectedTitle.querySelector("#pagination").appendChild(el);
-            }
-        }
-
         const el1 = new ViewFile(path);
         app.$.homedir.appendChild(el1);
+
+        setTimeout(()=>{
+            app.$.selectedTitle.querySelector("#pagination").innerHTML = "";
+
+            const elRoot = new PaginationButton("Root", "/");
+            if ( path == "/" || path == null || path == undefined || path.type == 'tap') {
+                elRoot.querySelector('a').classList.add("active");
+                app.$.selectedTitle.querySelector("#pagination").appendChild(elRoot);
+                path = '/';
+            } else {
+                elRoot.querySelector('a').classList.remove("active");
+                app.$.selectedTitle.querySelector("#pagination").appendChild(elRoot);
+                const dirNames = path.split("/");
+                let pt =  "";
+                for (let i = 1; i < dirNames.length; i++) {
+                    pt += "/" + dirNames[i];
+                    const el = new PaginationButton(dirNames[i], pt);
+                    el.querySelector('a').classList.remove("active");
+                    if ( i == (dirNames.length-1) ) {
+                        el.querySelector('a').classList.add("active");
+                    }
+                    app.$.selectedTitle.querySelector("#pagination").appendChild(el);
+                }
+            }
+        },100);
     };
 
     app.lsHomeDir = function()
@@ -117,6 +120,15 @@
         app.notifyPath('y');
         app.$.centralContextMenu.resetFit();
         app.$.centralContextMenu.open();
+    };
+
+    app.getAuthValue = function ()
+    {
+        if (sessionStorage.upauth !== undefined) {
+            return sessionStorage.authType + ' ' + sessionStorage.upauth;
+        } else {
+            return "Basic " + window.btoa('anonymous:nopassword');
+        }
     };
 
     function updateFeListAndMetaDataDrawer(status, itemIndex)
