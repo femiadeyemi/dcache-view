@@ -3,6 +3,10 @@
 
     var app = document.querySelector('#app');
 
+    // Global variables for monitoring drag and drop activities
+    let dndCounter = 0;
+    let timeoutID, dndArr = [];
+
     // Sets app default base URL
     app.baseUrl = '/';
 
@@ -122,12 +126,132 @@
         app.$.centralContextMenu.open();
     };
 
-    app.getAuthValue = function ()
-    {
+    app.getAuthValue = function () {
         if (sessionStorage.upauth !== undefined) {
             return sessionStorage.authType + ' ' + sessionStorage.upauth;
         } else {
             return "Basic " + window.btoa('anonymous:nopassword');
+        }
+    };
+
+    app.getfileName = function (path)
+    {
+        if (path === null || path === "" || path === "/") {
+            return 'Root';
+        } else {
+            let pt = path.endsWith('/') ? path.slice(0,-1): path;
+            return pt.slice(pt.lastIndexOf('/')).substring(1);
+        }
+    };
+
+    // Listing directory with time delay of @timeDelay
+    app.delayedLs = function (path, timeDelay)
+    {
+        timeoutID = window.setTimeout(()=>{
+            app.ls(path);
+            dndArr = [];
+            dndArr.length = 0;
+        },timeDelay);
+    };
+
+    // abort request to delayed listing directory
+    app.clearDelayedLs = function()
+    {
+        dndArr = [];
+        dndArr.length = 0;
+        window.clearTimeout(timeoutID);
+    };
+
+    app.delayTact = function (file)
+    {
+        dndArr.push(file);
+        const len = dndArr.length;
+        if (len === 1) {
+            app.delayedLs(file.__data__.filePath, 2000);
+        } else if (dndArr[len - 1].__data__.name !== dndArr[len - 2].__data__.name) {
+            app.clearDelayedLs();
+        }
+    };
+
+    /**
+     *
+     * current view drag and drop events listeners
+     */
+    app.drop = function(e)
+    {
+        let event = e || event;
+        event.preventDefault && event.preventDefault();
+
+        app.$.dropZoneToast.close();
+
+        let upload = new DndUpload(app.$.homedir.querySelector('view-file').path);
+        upload.start(event);
+
+        dndCounter = 0;
+    };
+    app.dragenter = function(e)
+    {
+        let event = e || event;
+        event.preventDefault && event.preventDefault();
+        dndCounter++;
+
+        app.$.dropZoneContent.querySelector('drag-enter-toast').directoryName =
+            app.getfileName(app.$.homedir.querySelector('view-file').path);
+        //app.$.homedir.classList.add();
+        app.$.dropZoneToast.open();
+    };
+    app.dragleave = function()
+    {
+        dndCounter--;
+        if (dndCounter === 0) {
+            //app.$.homedir.classList.remove();
+            app.$.dropZoneToast.close();
+        }
+    };
+    app.dragend = function()
+    {
+        dndCounter = 0;
+    };
+    app.dragexit = function()
+    {
+        dndCounter = 0;
+    };
+
+    app.checkBrowser = function ()
+    {
+        const ua = window.navigator.userAgent;
+        let tem = [];
+        let M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i);
+
+        if(/trident/i.test(M[1])) {
+            tem = /\brv[ :]+(\d+.?\d*)/g.exec(ua) || [];
+            return {name: 'Internet Explorer', version: tem[1]};
+        } else if(/firefox/i.test(M[1])) {
+            tem = /\brv[ :]+(\d+.?\d*)/g.exec(ua) || [];
+            return {name: 'Firefox', version: tem[1]};
+        } else if(/safari/i.test(M[1])) {
+            tem = ua.match(/\bVersion\/(\d+.?\d*\s*\w+)/);
+            return {name: 'Safari', version: tem[1]};
+        } else if(M[1] === 'Chrome') {
+            //opera
+            const temOpr = ua.match(/\b(OPR)\/(\d+.?\d*.?\d*.?\d*)/);
+            //edge
+            const temEdge = ua.match(/\b(Edge)\/(\d+.?\d*)/);
+            //chrome
+            const temChrome = ua.match(/\b(Chrome)\/(\d+.?\d*.?\d*.?\d*)/);
+            let genuineChrome = temOpr === null && temEdge === null && temChrome !== null;
+
+            if(temOpr !== null) {
+                return {name: temOpr[1].replace('OPR', 'Opera'), version: temOpr[2]};
+            }
+
+            if(temEdge !== null) {
+                return {name: temEdge[1], version: temEdge[2]};
+            }
+
+            if(genuineChrome) {
+                return {name: temChrome[1], version: temChrome[2]};
+            }
         }
     };
 
@@ -208,5 +332,23 @@
     window.addEventListener('iron-overlay-canceled', ()=> {
         app.$.homedir.querySelector('iron-list').selectionEnabled = false;
         setTimeout(()=>{app.$.homedir.querySelector('iron-list').selectionEnabled = true;},10)
+    });
+
+    // Prevent drag and drop default behaviour on the page
+    window.addEventListener('drag', function(event) {
+        event.preventDefault();
+        return false;
+    });
+    window.addEventListener('drop', function(event) {
+        event.preventDefault();
+        return false;
+    });
+    window.addEventListener('dragenter', function(event) {
+        event.preventDefault();
+        return false;
+    });
+    window.addEventListener('dragover', function(event) {
+        event.preventDefault();
+        return false;
     });
 })(document);
