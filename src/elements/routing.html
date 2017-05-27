@@ -88,6 +88,23 @@
                 return;
             }
 
+            /* File Sharing with Macaroons*/
+            if (window.location.hash.includes('#!/filesharing?filePath=')) {
+                let a = window.location.hash;
+                a = a.replace("#!/filesharing?", "");
+                let arr = a.split('&');
+
+                let pt = decodeURIComponent(arr[0].replace('filePath=',""));
+                let m = arr[1].replace('m=',"");
+                //set the session storage
+
+                page('/');
+
+
+                app.ls(pt);
+                return;
+            }
+
             app.$.toast.text = 'Can\'t find: ' + href  + '. Redirected you to Home Page';
             app.$.toast.show();
             page.redirect(app.baseUrl);

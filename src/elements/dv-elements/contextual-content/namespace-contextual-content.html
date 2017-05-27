@@ -6,6 +6,8 @@
 
 <link rel="import" href="../qbi-dialog-content/qbi-dialog-content.html">
 <link rel="import" href="change-qos-context-menu.html">
+<link rel="import" href="../file-sharing/file-sharing-dialog-content.html">
+
 <dom-module id="namespace-contextual-content">
     <template>
         <style>
@@ -63,6 +65,13 @@
                              multipleSelection, currentDir, targetNode)]]">
                 <iron-icon icon="editor:border-color" item-icon></iron-icon>
                 Rename
+            </paper-icon-item>
+
+            <paper-icon-item id="share"
+                             class$="[[_computedClass('share', singleSelection,
+                             multipleSelection, currentDir, targetNode)]]">
+                <iron-icon icon="social:share" item-icon></iron-icon>
+                Share a link
             </paper-icon-item>
 
             <paper-icon-item id="download"
@@ -142,6 +151,7 @@
             {
                 if (this.singleSelection) {
                     this.listen(this.$.delete, 'tap', '_delete');
+                    this.listen(this.$.share, 'tap', '_share');
                     this.listen(this.$.metadata, 'tap', '_metadata');
                     this.listen(this.$.move, 'tap', '_move');
                     this.listen(this.$.qosInfo, 'tap', '_qosInfo');
@@ -174,6 +184,7 @@
             {
                 if (this.singleSelection) {
                     this.unlisten(this.$.delete, 'tap', '_delete');
+                    this.unlisten(this.$.share, 'tap', '_share');
                     this.unlisten(this.$.metadata, 'tap', '_metadata');
                     this.unlisten(this.$.move, 'tap', '_move');
                     this.unlisten(this.$.qosInfo, 'tap', '_qosInfo');
@@ -533,6 +544,38 @@
                 dialogBox.open();
             },
 
+            _share: function ()
+            {
+                //very hackish
+                /*if (window.location.protocol === "http") {
+                 app.$.toast.text = "Sorry, you cannot share file using an unsecured protocol. ";
+                 app.$.toast.show();
+                 return;
+                 }*/
+
+                app.$.centralContextMenu.close();
+
+                let dialogBox = document.getElementById('centralDialogBox');
+                dialogBox.innerHTML = "";
+
+                if (!window.CONFIG.isSomebody) {
+                    app.$.toast.text = "You need to login to view this information. ";
+                    app.$.toast.show();
+                    return;
+                }
+                if (window.CONFIG.qos === undefined) {
+                    app.$.toast.text = "Request have been sent, please check again in a minute or two. ";
+                    app.$.toast.show();
+                    return;
+                }
+
+                let content = document.createElement('file-sharing-dialog-content');
+                content.filePath = this.targetNode.filePath;
+
+                dialogBox.appendChild(content);
+                dialogBox.open();
+            },
+
             /**
              * NOTE: @id value in this function must be exactly
              * the same as the element/node id attribute.
@@ -556,7 +599,7 @@
             _setDisabledAttribute: function (id, singleSelection, multipleSelection, t)
             {
                 if (multipleSelection && (id === 'open' || id === 'metadata' || id === 'rename' ||
-                    id === 'download' || id === 'changeQos')) {
+                    id === 'download' || id === 'changeQos' || id === 'share')) {
                     Polymer.dom(this.root).querySelector('#'+id).setAttribute('disabled', true);
                 }
 

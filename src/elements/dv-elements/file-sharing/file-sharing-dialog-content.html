@@ -1,0 +1,148 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<!--<link rel="import" href="../../../bower_components/qr-code/">-->
+
+<dom-module id="file-sharing-dialog-content">
+    <template>
+        <style>
+
+        </style>
+        <iron-ajax id="ajax"
+                   method="POST"
+                   handle-as="json" on-response="_handleResponse"
+                   on-error="_handleError" loading="{{loading}}"></iron-ajax>
+        <div>
+            <div class="headerContainer">
+                <div class="flex"><h3>Generate Shareable Link</h3></div>
+                <span class="flex2"></span>
+                <paper-icon-button id="closeBtn" icon="close" on-tap="_close"></paper-icon-button>
+            </div>
+            <div>
+                <div class="flex">
+                    <iron-a11y-keys target="[[target]]" keys="esc enter" on-keys-pressed="_action"></iron-a11y-keys>
+                    <span>
+                        A shareable link for the file
+                        <code style="color: red;">[[fileName]]</code> will be generated.
+                    </span>
+                    <div>
+                        <label>Permission:</label>
+                        <paper-checkbox>Download</paper-checkbox>
+                        <paper-checkbox>Upload</paper-checkbox>
+                    </div>
+                    <div>
+                        <paper-dropdown-menu label="Duration">
+                            <paper-listbox slot="dropdown-content" class="dropdown-content">
+                                <paper-item>1 hour</paper-item>
+                                <paper-item>2 hours</paper-item>
+                                <paper-item>3 hours</paper-item>
+                                <paper-item>4 hours</paper-item>
+                                <paper-item>24 hours</paper-item>
+                            </paper-listbox>
+                        </paper-dropdown-menu>
+                    </div>
+                </div>
+                <br>
+                <div class="buttons">
+                    <paper-button id="cancelBtn" on-tap="_close" raised>Cancel</paper-button>
+                    <paper-button id="linkBtn" on-tap="_getLink" raised>Get the link</paper-button>
+                </div>
+            </div>
+
+            <div class="loading">
+                <paper-spinner alt="waiting for response" active="{{loading}}"></paper-spinner>
+            </div>
+
+            <!--<template is="dom-if" if="[[isGenerated]]">
+
+                <div id="generatedLink">
+                    <span>[[generatedLink]]</span>
+                    <paper-button on-tap="_copy">Copy</paper-button>
+                </div>
+                <div id="qr">
+                    <qr-code data="[[generatedLink]]"></qr-code>
+                </div>
+
+            </template>-->
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'file-sharing-dialog-content',
+            properties: {
+                loading: {
+                    type: Boolean,
+                    notify: true
+                },
+                filePath: {
+                    type: String,
+                    notify: true
+                },
+                fileName: {
+                    type: String,
+                    notify: true,
+                    computed:'_computeFileName(filePath)'
+                },
+                parentPath: {
+                    type: String,
+                    notify: true,
+                    computed:'_computeParentPath(filePath)'
+                },
+                isGenerated: {
+                    type: Boolean,
+                    value: false,
+                    notify: true
+                },
+            },
+
+            _computeFileName: function (pt)
+            {
+                let name;
+                if (pt === "/") {
+                    name = 'Root'
+                } else {
+                    name = pt.substr(pt.lastIndexOf("/")+1);
+                }
+                return name;
+            },
+
+            _computeParentPath: function (pt)
+            {
+                return pt.substr(0, pt.lastIndexOf("/"));
+            },
+
+            _getLink: function ()
+            {
+                this.loading = true;
+                let url;
+                if (window.CONFIG.webdavEndpoint === "") {
+                    url = "https" + "//" + window.location.hostname + ":2881" + this.filePath;
+                } else {
+                    url = window.CONFIG.webdavEndpoint + this.filePath;
+                }
+                let auth = 'Basic ' + sessionStorage.upauth;
+
+                this.$.ajax.url = 'https://localhost:2881'+this.filePath;
+
+                this.$.ajax.headers = {
+                    "Content-Type": "application/macaroon-request",
+                    "Authorization": auth
+                };
+                this.$.ajax.generateRequest();
+            },
+
+            _handleResponse: function (e) {
+
+                //console.log(this.$.ajax.response);
+                let m = e.detail.response.macaroon;
+                let s = window.location.href+'#!/filesharing?filePath='+ encodeURIComponent(this.filePath) + '&m='+m;
+                console.log(s);
+                /*this.loading = false;
+                this.isGenerated = true;*/
+            },
+            _handleError: function (e)
+            {
+                console.log(e);
+            }
+        })
+    </script>
+
+</dom-module>
