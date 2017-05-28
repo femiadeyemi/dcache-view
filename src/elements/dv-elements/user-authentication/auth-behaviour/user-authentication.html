@@ -26,12 +26,6 @@
                 redirectTo: {
                     type: Object,
                     notify: true
-                },
-                // FIXME: This a workaround since the server is
-                // not returning the username.
-                username: {
-                    type: String,
-                    notify: true
                 }
             },
 
@@ -48,7 +42,7 @@
                 }
             },
 
-            send: function(authFramework, username)
+            send: function(authFramework)
             {
                 switch (authFramework) {
                     case "Basic":
@@ -64,9 +58,6 @@
                 }
 
                 this.$.ajax.url = window.CONFIG.webapiEndpoint+"user";
-
-                //FIXME: remove
-                this.username = username === undefined ? 'openID user': username;
 
                 this.$.ajax.generateRequest();
             },
@@ -88,7 +79,7 @@
                     sessionStorage.setItem("uid", request.xhr.response.uid);
                     sessionStorage.setItem("gids", (request.xhr.response.gids).toString());
                     sessionStorage.setItem("homeDirectory", request.xhr.response.homeDirectory);
-                    sessionStorage.setItem("name", this.username);
+                    sessionStorage.setItem("name", request.xhr.response.username);
                     app.$.WhoAmI.querySelector('user-loginout-button').upauth = this.auth;
                     window.CONFIG.isSomebody = true;
                     app.notifyPath('config.isSomebody');
