@@ -88,7 +88,7 @@
                 return;
             }
 
-            /* File Sharing with Macaroons*/
+            /* File Sharing with Macaroons */
             if (window.location.hash.includes('#!/filesharing?filePath=')) {
                 let a = window.location.hash;
                 a = a.replace("#!/filesharing?", "");
@@ -101,12 +101,11 @@
                 let userAuth = new UserAuthentication(redirectInfoObj, m);
 
                 userAuth.addEventListener('error', (e) => {
-                    const a = '"page":'+ redirectInfoObj.page + ',"path":"' + redirectInfoObj.path + '"';
                     app.$.toast.text = e.detail.message + " ";
                     app.$.toast.show();
                 });
 
-                userAuth.send("Bearer", "macaroons");
+                userAuth.send("Bearer", "macaroon");
                 return;
             }
 

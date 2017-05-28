@@ -112,12 +112,6 @@
             _getLink: function ()
             {
                 this.loading = true;
-                let url;
-                if (window.CONFIG.webdavEndpoint === "") {
-                    url = "https" + "//" + window.location.hostname + ":2881" + this.filePath;
-                } else {
-                    url = window.CONFIG.webdavEndpoint + this.filePath;
-                }
                 let auth = 'Basic ' + sessionStorage.upauth;
 
                 this.$.ajax.url = 'https://localhost:2881'+this.filePath;
@@ -129,18 +123,19 @@
                 this.$.ajax.generateRequest();
             },
 
-            _handleResponse: function (e) {
-
-                //console.log(this.$.ajax.response);
+            _handleResponse: function (e)
+            {
                 let m = e.detail.response.macaroon;
                 let s = window.location.href+'#!/filesharing?filePath='+ encodeURIComponent(this.filePath) + '&m='+m;
                 console.log(s);
                 /*this.loading = false;
                 this.isGenerated = true;*/
             },
+
             _handleError: function (e)
             {
-                console.log(e);
+                app.$.toast.text = e.message;
+                app.$.toast.show();
             }
         })
     </script>
