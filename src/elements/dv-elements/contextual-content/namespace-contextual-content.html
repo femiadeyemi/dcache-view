@@ -563,11 +563,6 @@
                     app.$.toast.show();
                     return;
                 }
-                if (window.CONFIG.qos === undefined) {
-                    app.$.toast.text = "Request have been sent, please check again in a minute or two. ";
-                    app.$.toast.show();
-                    return;
-                }
 
                 let content = document.createElement('file-sharing-dialog-content');
                 content.filePath = this.targetNode.filePath;

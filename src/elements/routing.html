@@ -96,12 +96,17 @@
 
                 let pt = decodeURIComponent(arr[0].replace('filePath=',""));
                 let m = arr[1].replace('m=',"");
-                //set the session storage
 
-                page('/');
+                let redirectInfoObj = {"page":"home", "path":pt};
+                let userAuth = new UserAuthentication(redirectInfoObj, m);
 
+                userAuth.addEventListener('error', (e) => {
+                    const a = '"page":'+ redirectInfoObj.page + ',"path":"' + redirectInfoObj.path + '"';
+                    app.$.toast.text = e.detail.message + " ";
+                    app.$.toast.show();
+                });
 
-                app.ls(pt);
+                userAuth.send("Bearer", "macaroons");
                 return;
             }
 
