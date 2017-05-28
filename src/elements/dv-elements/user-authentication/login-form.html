@@ -138,7 +138,7 @@
                     this.errorMessage = e.detail.message;
                 });
 
-                userAuth.send("Basic", this.username);
+                userAuth.send("Basic");
             },
 
             _computedClass: function (errMessage)
