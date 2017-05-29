@@ -1,48 +1,67 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
-<!--<link rel="import" href="../../../bower_components/qr-code/">-->
+<!--<link rel="import" href="../../../bower_components/granite-qrcode-generator/granite-qrcode-generator.html">-->
 
 <dom-module id="file-sharing-dialog-content">
     <template>
         <style>
-
+            :host {
+                width: 400px;
+                max-height: 500px;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            #mainWrapper{
+                width: 400px;
+                padding: 10px !important;
+                overflow: scroll;
+            }
+            .headerContainer {
+                display: flex;
+                height: 50px;
+                align-items: center;
+                border-bottom: 1px solid #d6d6d6;
+                margin-bottom: 20px;
+                background-color: #fff;
+                color: #333;
+            }
+            .flex {
+                flex-grow: 1;
+            }
+            .flex2 {
+                flex-grow: 2;
+            }
+            #linkDisplay {
+                display: none;
+            }
+            #genQR {
+                background-color: #0e5aff;
+                color: white !important;
+            }
+            paper-fab {
+                --paper-fab-background: #FF5722;
+                --paper-fab-keyboard-focus-background: #BF360C;
+            }
         </style>
         <iron-ajax id="ajax"
                    method="POST"
                    handle-as="json" on-response="_handleResponse"
                    on-error="_handleError" loading="{{loading}}"></iron-ajax>
-        <div>
+        <div id="mainWrapper">
             <div class="headerContainer">
-                <div class="flex"><h3>Generate Shareable Link</h3></div>
+                <div class="flex"><h3>Share with others</h3></div>
                 <span class="flex2"></span>
-                <paper-icon-button id="closeBtn" icon="close" on-tap="_close"></paper-icon-button>
+                <paper-icon-button id="closeBtn" icon="close" dialog-dismiss></paper-icon-button>
             </div>
             <div>
                 <div class="flex">
-                    <iron-a11y-keys target="[[target]]" keys="esc enter" on-keys-pressed="_action"></iron-a11y-keys>
                     <span>
-                        A shareable link for the file
-                        <code style="color: red;">[[fileName]]</code> will be generated.
+                        Generate a shareable link for the file <code style="color: red;">[[fileName]]</code>.
                     </span>
-                    <div>
-                        <label>Permission:</label>
-                        <paper-checkbox>Download</paper-checkbox>
-                        <paper-checkbox>Upload</paper-checkbox>
-                    </div>
-                    <div>
-                        <paper-dropdown-menu label="Duration">
-                            <paper-listbox slot="dropdown-content" class="dropdown-content">
-                                <paper-item>1 hour</paper-item>
-                                <paper-item>2 hours</paper-item>
-                                <paper-item>3 hours</paper-item>
-                                <paper-item>4 hours</paper-item>
-                                <paper-item>24 hours</paper-item>
-                            </paper-listbox>
-                        </paper-dropdown-menu>
-                    </div>
                 </div>
                 <br>
+                <br>
                 <div class="buttons">
-                    <paper-button id="cancelBtn" on-tap="_close" raised>Cancel</paper-button>
+                    <paper-button dialog-dismiss>Cancel</paper-button>
                     <paper-button id="linkBtn" on-tap="_getLink" raised>Get the link</paper-button>
                 </div>
             </div>
@@ -51,17 +70,24 @@
                 <paper-spinner alt="waiting for response" active="{{loading}}"></paper-spinner>
             </div>
 
-            <!--<template is="dom-if" if="[[isGenerated]]">
-
-                <div id="generatedLink">
-                    <span>[[generatedLink]]</span>
-                    <paper-button on-tap="_copy">Copy</paper-button>
+            <div id="linkDisplay">
+                <div id="resultContainer" style="margin-bottom: 5px;">
+                    <div id="link" style="width: 380px !important;">
+                        <textarea id="linkWrapper" readonly
+                                  style="width: 380px; height: 50px; word-wrap:
+                                    break-word; text-align: justify; text-justify: inter-word;
+                                    text-indent: 0px; !important; text-align: left;">
+                            [[generatedLink]]
+                        </textarea>
+                    </div>
                 </div>
-                <div id="qr">
-                    <qr-code data="[[generatedLink]]"></qr-code>
-                </div>
 
-            </template>-->
+                <div style="display: flex">
+                    <paper-button id="genQR" on-tap="_generateQR" raised>Generate QR Code</paper-button>
+                    <span class="flex"></span>
+                    <paper-fab on-tap="_copy" icon="link" title="Copy link"></paper-fab>
+                </div>
+            </div>
         </div>
     </template>
     <script>
@@ -86,9 +112,8 @@
                     notify: true,
                     computed:'_computeParentPath(filePath)'
                 },
-                isGenerated: {
-                    type: Boolean,
-                    value: false,
+                generatedLink: {
+                    type: String,
                     notify: true
                 },
             },
@@ -127,15 +152,37 @@
             {
                 let m = e.detail.response.macaroon;
                 let s = window.location.href+'#!/filesharing?filePath='+ encodeURIComponent(this.filePath) + '&m='+m;
-                console.log(s);
-                /*this.loading = false;
-                this.isGenerated = true;*/
+
+                this.generatedLink = s ;
+
+                this.$.linkDisplay.style.display = 'block';
+
+                this.$.linkWrapper.select();
+
+                this.loading = false;
+
             },
 
             _handleError: function (e)
             {
                 app.$.toast.text = e.message;
                 app.$.toast.show();
+            },
+
+            _copy: function ()
+            {
+                let copiedLink = this.$.linkWrapper;
+                copiedLink.select();
+
+                try {
+                    let successful = document.execCommand('copy');
+                    let msg = successful ? 'successful' : 'unsuccessful';
+                    app.$.toast.text = 'Link copied ' + msg;
+                    app.$.toast.show();
+                } catch (err) {
+                    app.$.toast.text = 'Oops, unable to copy';
+                    app.$.toast.show();
+                }
             }
         })
     </script>
