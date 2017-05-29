@@ -137,7 +137,7 @@
             _getLink: function ()
             {
                 this.loading = true;
-                let auth = 'Basic ' + sessionStorage.upauth;
+                let auth = app.getAuthValue();
 
                 this.$.ajax.url = 'https://localhost:2881'+this.filePath;
 
