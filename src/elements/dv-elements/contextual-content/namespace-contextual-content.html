@@ -292,8 +292,9 @@
             _metadata: function()
             {
                 app.$.centralContextMenu.close();
+                let i = app.$.homedir.querySelector("#feList").items.indexOf(this.targetNode.fileMData);
                 const fm = new FileMetadata(this.targetNode.name, this.targetNode.filePath,
-                    this.targetNode.fileType);
+                    this.targetNode.fileType, i);
                 app.$.metadataDrawer.innerHTML = "";
                 app.$.metadataDrawer.appendChild(fm);
                 app.$.metadata.openDrawer();
