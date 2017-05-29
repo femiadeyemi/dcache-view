@@ -268,7 +268,7 @@
     function periodicalCurrentQosRequest(options)
     {
         let namespace = document.createElement('dcache-namespace');
-        namespace.auth = sessionStorage.upauth;
+        namespace.auth = app.getAuthValue();
         namespace.promise.then( (req) => {
             if (req.response.targetQos !== undefined) {
                 updateFeListAndMetaDataDrawer('&#8594; '+ options.targetQos, options.itemIndex);
