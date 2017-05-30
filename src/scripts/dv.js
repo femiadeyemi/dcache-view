@@ -70,7 +70,7 @@
 
     app.lsHomeDir = function()
     {
-        app.ls(window.CONFIG.homeDirectory);
+        app.ls(sessionStorage.homeDirectory);
     };
 
     app.currentDirContext = function(e)
@@ -271,8 +271,10 @@
         namespace.auth = app.getAuthValue();
         namespace.promise.then( (req) => {
             if (req.response.targetQos !== undefined) {
-                updateFeListAndMetaDataDrawer('&#8594; '+ options.targetQos, options.itemIndex);
+                updateFeListAndMetaDataDrawer('-> '+ options.targetQos, options.itemIndex);
 
+                app.$.toast.text = "In transition... ";
+                app.$.toast.show();
                 //ask every two seconds
                 setTimeout(periodicalCurrentQosRequest(options), 2000);
             } else if (req.response.currentQos === options.targetQos) {

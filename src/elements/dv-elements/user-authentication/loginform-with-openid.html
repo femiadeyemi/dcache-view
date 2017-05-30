@@ -188,7 +188,7 @@
                 <div style="color:#b5b5b5; font-size: 0.9em; letter-spacing: 1px;line-height: 2em;">
                     Supported OpenID Providers
                 </div>
-                <div style="width: 250px; height: 0; border-bottom: double #e0e0e0;"></div>
+                <!--<div style="width: 250px; height: 0; border-bottom: double #e0e0e0;"></div>-->
                 <div id="providersContainer">
                     <!-- TODO: style the buttons based on the provider's (logo/style/theme) -->
                     <template is="dom-repeat" items="{{openIDproviders}}">
@@ -228,7 +228,7 @@
                 const len = a.length;
                 let jsonString = '';
                 for (let i=0; i<len; i++) {
-                    jsonString += '{"name":"' + a[i] + '", "id":"' + b[i] + '", "endpoint":"' + c[i] + '"},';
+                    jsonString += '{"name":"Login with ' + a[i] + ' account", "id":"' + b[i] + '", "endpoint":"' + c[i] + '"},';
                 }
 
                 this.openIDproviders = [JSON.parse(jsonString.slice(0,-1))];

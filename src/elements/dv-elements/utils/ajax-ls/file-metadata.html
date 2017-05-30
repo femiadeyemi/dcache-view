@@ -452,7 +452,7 @@
             {
                 const target = e.target.getAttribute('data-transition-name');
                 const namespace = document.createElement('dcache-namespace');
-                namespace.auth = sessionStorage.upauth;
+                namespace.auth = app.getAuthValue();
                 const path = this.path;
 
                 namespace.promise.then(

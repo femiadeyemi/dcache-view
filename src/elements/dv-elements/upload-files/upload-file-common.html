@@ -69,7 +69,7 @@
 
                 new UploadHandler({
                     file: file,
-                    upauth: sessionStorage.upauth,
+                    upauth: app.getAuthValue(),
                     url: uploadUrl,
                     onComplete: (data)=>
                     {

@@ -1,6 +1,7 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
-<!--<link rel="import" href="../../../bower_components/granite-qrcode-generator/granite-qrcode-generator.html">-->
 
+<script src="../../../bower_components/qrjs/qr.js"></script>
+<script src="../../../bower_components/qr-code/src/qr-code.js"></script>
 <dom-module id="file-sharing-dialog-content">
     <template>
         <style>
@@ -30,7 +31,7 @@
             .flex2 {
                 flex-grow: 2;
             }
-            #linkDisplay {
+            #qrPicture, #linkDisplay {
                 display: none;
             }
             #genQR {
@@ -60,10 +61,18 @@
                 </div>
                 <br>
                 <br>
-                <div class="buttons">
-                    <paper-button dialog-dismiss>Cancel</paper-button>
-                    <paper-button id="linkBtn" on-tap="_getLink" raised>Get the link</paper-button>
+                <div style="display: flex; align-items: center;">
+                    <div style="height:100px; width: 150px;" >
+                        <qr-code id="qrPicture" data="[[generatedLink]]" modulesize="2" margin="1" format="html"></qr-code>
+                    </div>
+                    <div>
+                        <div class="buttons">
+                            <paper-button dialog-dismiss>Cancel</paper-button>
+                            <paper-button id="linkBtn" on-tap="_getLink" raised>Get the link</paper-button>
+                        </div>
+                    </div>
                 </div>
+
             </div>
 
             <div class="loading">
@@ -153,7 +162,7 @@
                 let m = e.detail.response.macaroon;
                 let s = window.location.href+'#!/filesharing?filePath='+ encodeURIComponent(this.filePath) + '&m='+m;
 
-                this.generatedLink = s ;
+                this.generatedLink = s.trim() ;
 
                 this.$.linkDisplay.style.display = 'block';
 
@@ -183,6 +192,11 @@
                     app.$.toast.text = 'Oops, unable to copy';
                     app.$.toast.show();
                 }
+            },
+
+            _generateQR: function ()
+            {
+                this.$.qrPicture.style.display = 'block';
             }
         })
     </script>

@@ -67,7 +67,7 @@
                 {
                     let url = window.CONFIG.webapiEndpoint + "namespace";
                     let namespace = document.createElement('dcache-namespace');
-                    namespace.auth = sessionStorage.upauth;
+                    namespace.auth = app.getAuthValue();
                     namespace.promise.then(
                         ()=> {resolve(name);}
                     ).catch(
