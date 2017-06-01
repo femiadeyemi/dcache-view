@@ -188,12 +188,13 @@
                 <div style="color:#b5b5b5; font-size: 0.9em; letter-spacing: 1px;line-height: 2em;">
                     Supported OpenID Providers
                 </div>
-                <div style="width: 250px; height: 0; border-bottom: double #e0e0e0;"></div>
+                <br>
                 <div id="providersContainer">
                     <!-- TODO: style the buttons based on the provider's (logo/style/theme) -->
                     <template is="dom-repeat" items="{{openIDproviders}}">
-                        <paper-button on-tap="_connect" data-id$="[[item.id]]" data-endpoint$="[[item.endpoint]]">
-                            {{item.name}}
+                        <paper-button on-tap="_connect" data-id$="[[item.id]]"
+                                      data-endpoint$="[[item.endpoint]]" style="text-transform: none !important;">
+                            Login via&nbsp;<label style="text-transform: capitalize !important;">{{item.name}}</label>
                         </paper-button>
                     </template>
                 </div>
