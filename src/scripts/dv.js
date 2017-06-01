@@ -17,7 +17,7 @@
         if (window.CONFIG.qos === undefined && window.CONFIG.isSomebody) {
             const apiEndPoint = window.CONFIG.webapiEndpoint;
 
-            const qos = new QosBackendInformation(apiEndPoint);
+            const qos = new QosBackendInformation(apiEndPoint, app.getAuthValue());
             qos.addEventListener('qos-backend-response', (e) => {
                 window.CONFIG.qos = e.detail.response;
             });
