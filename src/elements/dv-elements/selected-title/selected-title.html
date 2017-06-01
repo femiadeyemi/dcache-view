@@ -335,6 +335,7 @@
                 var dialogBox = document.getElementById('centralDialogBox');
                 dialogBox.innerHTML = "";
                 var mv = document.createElement('move-file');
+                mv.auth = app.getAuthValue();
                 mv.currentPath = currentPath;
 
                 if (vf.selectedItems.constructor === Array) {
