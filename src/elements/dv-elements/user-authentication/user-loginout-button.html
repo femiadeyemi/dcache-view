@@ -50,13 +50,13 @@
             white-space:normal !important;
             max-width: 350px;
         }
-        .uid, .gid, .hmdir {
+        .uid, .gid, .hmdir, .role {
             width: 100%;
             height: 40px;
             display: flex;
             align-items: center;
         }
-        .uid > span, .gid > span, .hmdir > span {
+        .uid > span, .gid > span, .hmdir > span, .role > span {
             flex:1;
             font-size: 0.7em;
             margin-left: 7px;
@@ -113,6 +113,15 @@
         .username > div > code {
             word-wrap: break-word;
         }
+        .show {
+            display: block;
+        }
+        .hide {
+            display: none;
+        }
+        .remove-border {
+            border:none !important;
+        }
     </style>
     <template>
         <paper-button on-tap="_login" id="login" style="border: 1px solid white;">log in</paper-button>
@@ -161,6 +170,32 @@
                                     <div class="collapse-content">{{gids}}</div>
                                 </iron-collapse>
                             </div>
+                            <div style="height:10px;"></div>
+                            <div>
+                                <div on-tap="_role" class="role">
+                                    <span>Roles
+                                        <iron-icon icon="icons:info" id="roleInfo"
+                                                           style="width:15px;height: 15px; fill:#0e5aff"></iron-icon>
+                                        <paper-tooltip for="roleInfo">
+                                            List of roles available to you.
+                                        </paper-tooltip>
+                                    </span>
+                                    <paper-icon-button icon="icons:expand-more" id="roleButton"></paper-icon-button>
+                                </div>
+                                <iron-collapse id="role">
+                                    <div class$="[[_computedClass('collapse-content')]]">
+                                        <span class$="[[_computedClass('span')]]">No roles</span>
+                                        <div class$="[[_computedClass('div')]]">
+                                            <template is="dom-repeat" items="[[unassertedRoles]]">
+                                                <!-- TODO: need styling-->
+                                                <paper-button class="[[_computedBtnClass(item)]]"
+                                                              on-tap="_assertRole"
+                                                              data-roles="[[item]]">{{item}}</paper-button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </iron-collapse>
+                            </div>
                         </div>
                         <div class="card-actions">
                             <paper-button on-tap="_logout">Log out</paper-button>
@@ -203,6 +238,10 @@
                     type: String,
                     notify: true
                 },
+                unassertedRoles: {
+                    type: Array,
+                    notify: true
+                }
             },
 
             observers: [
@@ -261,6 +300,7 @@
                 this.username = null;
                 this.uid = null;
                 this.gids = null;
+                this.unassertedRoles = null;
                 window.CONFIG.isSomebody = false;
                 app.notifyPath('config.isSomebody');
             },
@@ -282,6 +322,7 @@
                     this.uid = this._returnSessionValues("uid");
                     this.gids = this._returnSessionValues("gids");
                     this.homeDir = this._returnSessionValues("homeDirectory");
+                    this.unassertedRoles = this._returnSessionValues("unassertedRoles").split(",");
                 }
             },
 
@@ -313,11 +354,76 @@
                 this._showMore(this.$.hmDir, this.$.hmDirButton);
                 e.stopPropagation();
             },
+            _role: function (e)
+            {
+                e.stopPropagation();
+                this._showMore(this.$.role, this.$.roleButton);
+                e.stopPropagation();
+            },
             _showMore: function (feCollapseNode, btn)
             {
                 feCollapseNode.toggle();
                 btn.parentNode.classList.toggle("guid");
                 btn.classList.toggle("rotate");
+            },
+
+            _computedClass: function (element)
+            {
+                let x = sessionStorage.unassertedRoles;
+                if (x === [] || x === undefined || x === null || x === "") {
+                    //return element === "span" ? ' show' : ' hide';
+                    return element === "span" ? ' show' : element === "div" ? ' hide' : ' collapse-content';
+                } else {
+                    //return element === "span" ? ' hide' : ' show';
+                    return element === "span" ? ' hide' : element === "div" ? ' show' : ' collapse-content remove-border';
+                }
+
+                //collapse-content
+            },
+
+            _computedBtnClass: function(unassertedRole)
+            {
+                let assertedRoles = sessionStorage.roles;
+                const len = assertedRoles.length;
+                for (let i=0; i<len;i++) {
+                    if (unassertedRole === assertedRole[i]) {
+                        return ' asserted';
+                    }
+                }
+            },
+
+            _assertRole: function (e)
+            {
+                //TODO: display overlay
+                if (sessionStorage.authType === "Basic") {
+                    const role = e.target.getAttribute('data-roles');
+                    const oldAuth = window.atob(sessionStorage.upauth);
+
+                    const newUnencodedAuth = oldAuth.replace(sessionStorage.name,sessionStorage.name+"#" + role);
+                    const b64EncodedAuth = window.btoa(newUnencodedAuth);
+                    const redirectTo = {"page": "roleAssertion", "path": ""};
+                    let userAuth = new UserAuthentication(redirectTo, b64EncodedAuth, sessionStorage.unassertedRoles);
+
+                    userAuth.addEventListener('successful', (e) => {
+                        //remove overlay
+                        app.$.toast.text = e.detail.message + " ";
+                        app.$.toast.show();
+                    });
+
+                    userAuth.addEventListener('error', (e) => {
+                        //remove overlay
+                        app.$.toast.text = e.detail.message + " ";
+                        app.$.toast.show();
+                    });
+
+                    userAuth.send("Basic");
+                } else {
+                    //remove overlay
+                    app.$.toast.text = 'Unsupported operation: You cannot assert a role with' +
+                        sessionStorage.authType +
+                        ' authentication method. Please login with username and password to assert a role. ';
+                    app.$.toast.show();
+                }
             }
         });
     </script>

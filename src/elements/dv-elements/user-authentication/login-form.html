@@ -132,7 +132,7 @@
 
                 let up = this.username + ":" + this.password;
                 this.auth = window.btoa(up);
-                let userAuth = new UserAuthentication(this.redirectTo, this.auth);
+                let userAuth = new UserAuthentication(this.redirectTo, this.auth, []);
 
                 userAuth.addEventListener('error', (e) => {
                     this.errorMessage = e.detail.message;

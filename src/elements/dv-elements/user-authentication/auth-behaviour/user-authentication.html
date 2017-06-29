@@ -26,6 +26,10 @@
                 redirectTo: {
                     type: Object,
                     notify: true
+                },
+                unassertedRoles: {
+                    type: Array,
+                    notify: true
                 }
             },
 
@@ -33,10 +37,11 @@
                 '_broadcastError(errorMessage)'
             ],
 
-            factoryImpl: function(redirect, auth)
+            factoryImpl: function(redirect, auth, unassertedRoles)
             {
                 this.redirectTo = redirect;
                 this.auth = auth;
+                this.unassertedRoles = unassertedRoles;
             },
 
             attached: function ()
@@ -79,19 +84,27 @@
             _handleResponse: function(e, request)
             {
                 if ( request.xhr.response.status === "AUTHENTICATED" ) {
+                    let roles = request.xhr.response.roles===undefined? [] :request.xhr.response.roles;
+                    this.unassertedRoles = request.xhr.response.unassertedRoles===undefined? this.unassertedRoles :
+                        request.xhr.response.unassertedRoles;
+
                     sessionStorage.setItem("upauth", this.auth);
                     sessionStorage.setItem("uid", request.xhr.response.uid);
                     sessionStorage.setItem("gids", (request.xhr.response.gids).toString());
                     sessionStorage.setItem("homeDirectory", request.xhr.response.homeDirectory);
                     sessionStorage.setItem("rootDirectory", request.xhr.response.rootDirectory);
                     sessionStorage.setItem("name", request.xhr.response.username);
+                    sessionStorage.setItem("roles", roles);
+                    sessionStorage.setItem("unassertedRoles", this.unassertedRoles);
                     app.$.WhoAmI.querySelector('user-loginout-button').upauth = this.auth;
                     window.CONFIG.isSomebody = true;
                     app.notifyPath('config.isSomebody');
                     if (this.redirectTo.page === "home") {
                         page("/");
                         app.ls(this.redirectTo.path);
-                    } else {
+                    } else if (this.redirectTo.page === "roleAssertion") {
+                        this.fire('successful', {message: "Role asserted!"});
+                    }else {
                         page("/"+this.redirectTo.page);
                     }
                 } else if ( request.xhr.response.status === "ANONYMOUS" ) {
