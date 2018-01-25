@@ -382,8 +382,6 @@
                         this._dummyXSelectedItemsHolder.push({"keyValue":"shift","file":selectedItem});
                     } else if (this._ctrlKeyOn) {
                         this._dummyXSelectedItemsHolder.push({"keyValue":"ctrl","file":selectedItem});
-                    } else if (this._ArrowDownKeyOn) {
-                        console.log(selectedItem);
                     } else {
                         this._dummyXSelectedItemsHolder.push({"keyValue":"none","file":selectedItem});
                     }
@@ -466,37 +464,43 @@
 
             _multipleSelectionShortcuts(event)
             {
-                if (event.shiftKey) {
+                //TODO: incomplete support for the up and down Arrow keys.
+                if ((window.navigator.platform.match("Mac")
+                        ? event.metaKey : event.ctrlKey) && event.key === "ArrowUp") {
+                    this.__arrowUpDown_CtrlShift('up');
+                } else if ((window.navigator.platform.match("Mac")
+                        ? event.metaKey : event.ctrlKey) && event.key === "ArrowDown") {
+                    this.__arrowUpDown_CtrlShift('down');
+                } else if (event.shiftKey && event.key === "ArrowUp") {
+                    this.__arrowUpDown_CtrlShift('up');
+                } else if (event.shiftKey && event.key === "ArrowDown") {
+                    this.__arrowUpDown_CtrlShift('down');
+                } else if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                    const key = event.key;
+                    const file = this._dummyXSelectedItemsHolder[this._dummyXSelectedItemsHolder.length - 1].file;
+
+                    this.$.feList.clearSelection();
+                    this._removeAllXSelected();
+                    this._dummyXSelectedItemsHolder = [];
+                    let index;
+                    switch (key) {
+                        case 'ArrowUp':
+                            index = this.$.feList.items.indexOf(file) - 1 === -1 ? 0 :
+                                this.$.feList.items.indexOf(file) - 1;
+                            break;
+                        default:
+                            index = this.$.feList.items.indexOf(file) + 1 === this.$.feList.items.length ?
+                                this.$.feList.items.indexOf(file) : this.$.feList.items.indexOf(file) + 1;
+                    }
+                    this.$.feList.selectIndex(index);
+                } else if (event.shiftKey) {
                     this._shiftKeyOn = true;
                     this._ctrlKeyOn = false;
-                }
-                if (window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey) {
+                } else if (window.navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey) {
                     this._shiftKeyOn = false;
                     this._ctrlKeyOn = true;
                 }
-                /*console.log(event.key);
-                console.log(event.shiftKey);*/
 
-                //TODO: incomplete support for the up and down Arrow keys.
-                if (event.shiftKey && event.key === "ArrowUp") {
-                    this._shiftKeyOn = false;
-                    this._ctrlKeyOn = false;
-                    this._ArrowDownKeyOn = false;
-                    this._ArrowUpKeyOn = true;
-                    console.log("ArrowUp");
-                    console.log(this._xSelectedItems);
-                    console.log(this._dummyXSelectedItemsHolder);
-
-                }
-                if (event.shiftKey && event.key === "ArrowDown") {
-                    this._shiftKeyOn = false;
-                    this._ctrlKeyOn = false;
-                    this._ArrowUpKeyOn = false;
-                    this._ArrowDownKeyOn = true;
-                    console.log("ArrowDown");
-                    console.log(this._xSelectedItems);
-                    console.log(this._dummyXSelectedItemsHolder);
-                }
             }
 
             _resetMultipleSelectionShortcuts(event)
@@ -581,9 +585,32 @@
                         case 'ctrl':
                             if (this.$.feList.items[idx1].xSelected) {
                                 this._removeXSelected(idx1);
+
+                                const id = this._dummyXSelectedItemsHolder.findIndex(el => {
+                                    return el.file.fileName === lastFile.fileName;
+                                });
+                                if (id >= 0) {
+                                    this._dummyXSelectedItemsHolder.splice(id, 1);
+                                }
                             } else {
                                 this._dummyXSelectedItemsHolder[len-1].file.xSelected = true;
-                                this._xSelectItem(idx1)
+                                this._xSelectItem(idx1);
+                            }
+                            break;
+                        case 'arrow-up':
+                        case 'arrow-down':
+                            if (this.$.feList.items[idx1].xSelected) {
+                                const myD = this._dummyXSelectedItemsHolder.slice(0,len-1);
+                                const id = myD.findIndex(el => {
+                                    return el.file.fileName === lastFile.fileName;
+                                });
+                                if (id >= 0 && myD[id].keyValue === lastKeyValue) {
+                                    this._removeXSelected(idx1);
+                                    this._dummyXSelectedItemsHolder.splice(id, 1);
+                                }
+                            } else {
+                                this._dummyXSelectedItemsHolder[len-1].file.xSelected = true;
+                                this._xSelectItem(idx1);
                             }
                             break;
                     }
@@ -664,12 +691,25 @@
                         detail: {currentPath: pt}, bubbles: true, composed: true}));
             }
 
+            /**
+             * TODO: Moved the method to the Base mixin class
+             */
+            __findItemIndexOnAList(list, item, searchKey)
+            {
+                searchKey = !searchKey ? 'fileName': searchKey;
+                return list.findIndex(el => {
+                    return el[`${searchKey}`] === item[`${searchKey}`];
+                });
+            }
+
+            __getItemCurrentIndex(item)
+            {
+                return this.__findItemIndexOnAList(this.$.feList.items, item);
+            }
+
             _sendItemIndex(event)
             {
-                const index = this.$.feList.items.findIndex(el => {
-                    return el.fileName === event.detail.item.fileName;
-                });
-
+                const index = this.__getItemCurrentIndex(event.detail.item.fileName);
                 this.dispatchEvent(
                     new CustomEvent('receive-item-index', {
                         detail: {index: index}, bubbles: true, composed: true}));
@@ -685,6 +725,36 @@
                     this.notifySplices('_xSelectedItems');
                     this._shiftKeyOn = false;
                     this._ctrlKeyOn = false;
+                }
+            }
+            __arrowUpDown_CtrlShift(arrowType)
+            {
+                const file = this._dummyXSelectedItemsHolder[this._dummyXSelectedItemsHolder.length - 1].file;
+                const keyValue = this._dummyXSelectedItemsHolder[this._dummyXSelectedItemsHolder.length - 1].keyValue;
+                const idx = this.__getItemCurrentIndex(file);
+
+                if (keyValue === 'arrow-down' && arrowType === 'up'
+                        || keyValue === 'arrow-up' && arrowType === 'down') {
+                    this._removeXSelected(idx);
+                    this._dummyXSelectedItemsHolder.pop();
+                    this.__getAllItemsXSelected();
+                    return;
+                }
+                switch (arrowType) {
+                    case 'up':
+                        if (idx > 0) {
+                            const selectedItem = this.$.feList.items[idx-1];
+                            this._dummyXSelectedItemsHolder.push({"keyValue": "arrow-up", "file": selectedItem});
+                            this.notifySplices('_dummyXSelectedItemsHolder');
+                        }
+                        break;
+                    case 'down':
+                        if (idx >= 0 && idx < this.$.feList.items.length -1) {
+                            const selectedItem = this.$.feList.items[idx + 1];
+                            this._dummyXSelectedItemsHolder.push({"keyValue": "arrow-down", "file": selectedItem});
+                            this.notifySplices('_dummyXSelectedItemsHolder');
+                        }
+                        break;
                 }
             }
         }
