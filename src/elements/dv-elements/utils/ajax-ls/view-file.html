@@ -134,7 +134,7 @@
 
                 window.addEventListener('request-item-index', (e)=>{this._sendItemIndex(e)});
 
-                window.addEventListener('reset-internal-parameters', (e)=>{this._reset(e)});
+                window.addEventListener('reset-element-internal-parameters', (e)=>{this._reset(e)});
 
                 this.addEventListener('click', (e)=>{
                     e.stopPropagation();
@@ -464,7 +464,6 @@
 
             _multipleSelectionShortcuts(event)
             {
-                //TODO: incomplete support for the up and down Arrow keys.
                 if ((window.navigator.platform.match("Mac")
                         ? event.metaKey : event.ctrlKey) && event.key === "ArrowUp") {
                     this.__arrowUpDown_CtrlShift('up');

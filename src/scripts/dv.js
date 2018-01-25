@@ -473,7 +473,7 @@
     });
     app.$.homedir.addEventListener('click', function(event) {
         this.dispatchEvent(
-            new CustomEvent('reset-internal-parameters', {
+            new CustomEvent('reset-element-internal-parameters', {
                 detail: {element: 'view-file'}, bubbles: true, composed: true}));
     });
 })(document);

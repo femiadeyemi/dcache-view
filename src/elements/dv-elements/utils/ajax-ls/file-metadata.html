@@ -258,15 +258,11 @@
             constructor(file, path, idx)
             {
                 super();
-                console.log(file);
-                console.log(path);
-                console.log(idx);
                 if (idx === 1) {
                     this.index = -10;
                 } else {
                     window.addEventListener('receive-item-index', (e)=>{
                         this.index = e.detail.index;
-                        console.log(e.detail.index);
                     });
 
                     window.dispatchEvent(
