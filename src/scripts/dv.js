@@ -367,7 +367,6 @@
         }
         app.$.toast.show();
         app.mvObj = {};
-        app.$.homedir.querySelector('view-file').resetMultiSelection();
     };
 
     function updateFeListAndMetaDataDrawer(status, itemIndex)
@@ -471,5 +470,10 @@
     });
     window.addEventListener('admin-component-url-path', (evt)=>{
         page(evt.detail.path);
+    });
+    app.$.homedir.addEventListener('click', function(event) {
+        this.dispatchEvent(
+            new CustomEvent('reset-internal-parameters', {
+                detail: {element: 'view-file'}, bubbles: true, composed: true}));
     });
 })(document);
