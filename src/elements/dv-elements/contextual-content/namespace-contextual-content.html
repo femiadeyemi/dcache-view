@@ -292,9 +292,13 @@
             _metadata()
             {
                 app.$.centralContextMenu.close();
-                const fm = new FileMetadata(this.targetNode.name, this.targetNode.filePath,
-                    this.targetNode.fileType);
-                app.$.metadataDrawer.innerHTML = "";
+                if (app.$.metadataDrawer.querySelector('file-metadata')) {
+                    app.$.metadataDrawer.removeChild(
+                        app.$.metadataDrawer.querySelector('file-metadata'));
+                }
+                const fm = this.targetNode.fileMData ?
+                    new FileMetadata(this.targetNode.fileMData, this.targetNode.filePath, 0) :
+                    new FileMetadata(this.targetNode, this.targetNode.filePath, 1);
                 app.$.metadataDrawer.appendChild(fm);
                 app.$.metadata.openDrawer();
             }
