@@ -38,10 +38,6 @@
             .item:focus {
                 outline: 0 solid transparent !important;
             }
-            .item.selected {
-                background-color: #2196F3;
-                color: #fff !important;
-            }
             iron-list {
                 flex: 1 1 auto;
             }
@@ -151,7 +147,7 @@
 
                 window.removeEventListener('request-item-index', (e)=>{this._sendItemIndex(e)});
 
-                window.removeEventListener('reset-internal-parameters', (e)=>{this._reset(e)});
+                window.removeEventListener('reset-element-internal-parameters', (e)=>{this._reset(e)});
 
                 this.removeEventListener('click', (e)=>{
                     e.stopPropagation();
