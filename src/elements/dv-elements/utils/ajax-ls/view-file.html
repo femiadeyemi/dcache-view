@@ -14,6 +14,7 @@
 <link rel="import" href="../../directory-ls-message/empty-directory.html">
 <link rel="import" href="../../directory-ls-message/directory-ls-error.html">
 <link rel="import" href="../../user-authentication/user-login-page.html">
+<link rel="import" href="../../contextual-content/namespace-contextual-content.html">
 
 <dom-module id="view-file">
     <template>
@@ -135,6 +136,8 @@
                 this.addEventListener('click', (e)=>{
                     e.stopPropagation();
                 });
+
+                this.$.content.addEventListener('contextmenu', (e)=>{this._openContextMenu(e)});
             }
             disconnectedCallback()
             {
@@ -152,6 +155,8 @@
                 this.removeEventListener('click', (e)=>{
                     e.stopPropagation();
                 });
+
+                this.$.content.removeEventListener('contextmenu', (e)=>{this._openContextMenu(e)});
             }
             static get is()
             {
@@ -180,6 +185,12 @@
                         type: String,
                         notify: true,
                         computed: '_url(path)'
+                    },
+
+                    currentDirName: {
+                        type: String,
+                        computed: '_currentDirName(path)',
+                        notify: true
                     },
 
                     name: {
@@ -220,18 +231,6 @@
                     },
 
                     _ctrlKeyOn: {
-                        type: Boolean,
-                        value: false,
-                        notify: true
-                    },
-
-                    _ArrowUpKeyOn: {
-                        type: Boolean,
-                        value: false,
-                        notify: true
-                    },
-
-                    _ArrowDownKeyOn: {
                         type: Boolean,
                         value: false,
                         notify: true
@@ -751,6 +750,83 @@
                         }
                         break;
                 }
+            }
+
+            _openContextMenu(e)
+            {
+                e.stopPropagation();
+                e.preventDefault();
+
+                if (app.$.centralContextMenu.opened) {
+                    app.$.centralContextMenu.close();
+                }
+
+                //TODO: Create a Mixin method in the Base Mixin for removing all child nodes of an element
+                while (app.$.centralContextMenu.firstChild) {
+                    app.$.centralContextMenu.removeChild(app.$.centralContextMenu.firstChild);
+                }
+
+                let cc;
+                if (this._xSelectedItems.length === 0 || this._xSelectedItems.length === 1) {
+                    if (this.$.content.querySelector('empty-directory') ||
+                        this.$.content.querySelector('directory-ls-error')) {
+                        cc = new NamespaceContextualContent({"name":this.currentDirName,
+                                "filePath":this.path, "fileType":"DIR"}, 2);
+                    } else {
+                        const lr = e.path.find((el) => {
+                            return el.tagName === "LIST-ROW";
+                        });
+                        cc = new NamespaceContextualContent(lr, 0);
+                    }
+                } else {
+                    cc = new NamespaceContextualContent({files: this._xSelectedItems,
+                            parentPath: this.path}, 1);
+                }
+
+                app.$.centralContextMenu.appendChild(cc);
+
+                let x = 0, y = 0;
+
+                if (e.pageX || e.pageY) {
+                    x = e.pageX;
+                    y = e.pageY;
+                } else if (e.clientX || e.clientY) {
+                    x = e.clientX + document.body.scrollLeft +
+                        document.documentElement.scrollLeft;
+                    y = e.clientY + document.body.scrollTop +
+                        document.documentElement.scrollTop;
+                }
+
+                const vx = window.innerWidth;
+                const vy = window.innerHeight;
+                const w = 250;
+                const h = 340;
+
+                if (vx - x < w && vy - y >= h) {
+                    app.x = x-w;
+                    app.y = y;
+                } else if (vx - x < w && vy - y < h) {
+                    app.x = x-w;
+                    app.y = y-h;
+                } else if (vx - x >= w && vy - y < h) {
+                    app.x = x;
+                    app.y = y-h;
+                } else {
+                    app.x = x;
+                    app.y = y;
+                }
+
+                app.notifyPath('x');
+                app.notifyPath('y');
+                app.$.centralContextMenu.resetFit();
+                app.$.centralContextMenu.open();
+
+                e.stopPropagation();
+            }
+
+            _currentDirName(path)
+            {
+                return path === "/" ? 'ROOT' : path.slice(path.lastIndexOf("/")+1);
             }
         }
         window.customElements.define(ViewFile.is, ViewFile);
