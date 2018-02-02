@@ -127,6 +127,12 @@
         app.$.centralContextMenu.open();
     };
 
+    app.click = function (e) {
+        this.dispatchEvent(
+            new CustomEvent('reset-element-internal-parameters', {
+                detail: {element: 'view-file'}, bubbles: true, composed: true}));
+    };
+
     /**
      * Get the file name from the file path
      */
@@ -470,10 +476,5 @@
     });
     window.addEventListener('admin-component-url-path', (evt)=>{
         page(evt.detail.path);
-    });
-    app.$.homedir.addEventListener('click', function(event) {
-        this.dispatchEvent(
-            new CustomEvent('reset-element-internal-parameters', {
-                detail: {element: 'view-file'}, bubbles: true, composed: true}));
     });
 })(document);
