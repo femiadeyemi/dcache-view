@@ -773,7 +773,7 @@
                         cc = new NamespaceContextualContent({"name":this.currentDirName,
                                 "filePath":this.path, "fileType":"DIR"}, 2);
                     } else {
-                        const lr = e.path.find((el) => {
+                        const lr = e.composedPath().find((el) => {
                             return el.tagName === "LIST-ROW";
                         });
                         cc = new NamespaceContextualContent(lr, 0);
