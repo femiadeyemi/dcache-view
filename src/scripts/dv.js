@@ -148,7 +148,7 @@
 
     app.click = function (e) {
         this.dispatchEvent(
-            new CustomEvent('reset-element-internal-parameters', {
+            new CustomEvent('dv-namespace-reset-element-internal-parameters', {
                 detail: {element: 'view-file'}, bubbles: true, composed: true}));
     };
 

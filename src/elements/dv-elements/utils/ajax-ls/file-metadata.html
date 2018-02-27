@@ -261,12 +261,12 @@
                 if (idx === 1) {
                     this.index = -10;
                 } else {
-                    window.addEventListener('receive-item-index', (e)=>{
+                    window.addEventListener('dv-namespace-receive-item-index', (e)=>{
                         this.index = e.detail.index;
                     });
 
                     window.dispatchEvent(
-                        new CustomEvent('request-item-index', {
+                        new CustomEvent('dv-namespace-request-item-index', {
                             detail: {item: file}, bubbles: true, composed: true}));
                 }
                 path = path === "" ? "/": path;
@@ -395,7 +395,9 @@
             {
                 super.disconnectedCallback();
                 this.$.closeFileMetadataPanel.removeEventListener('tap', this._closeFileMetadataPanel);
-                window.removeEventListener('receive-item-index', (e)=>{});//not sure about this
+                window.removeEventListener('dv-namespace-receive-item-index', (e)=>{
+                    this.index = e.detail.index;
+                });
             }
 
             _url(path)
