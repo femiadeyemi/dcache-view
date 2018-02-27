@@ -95,7 +95,8 @@
                 event.preventDefault();
                 event.stopPropagation();
                 /**
-                 * TODO: A WORKAROUND: for firefox
+                 * A WORKAROUND for firefox
+                 * TODO: When firefox support web components fully, revisit.
                  */
                 this.dispatchEvent(new MouseEvent('contextmenu', {
                     view: window,

@@ -85,7 +85,7 @@
     {
         /**
          * This code include a workaround to accommodate firefox.
-         * TODO: When firefox support webcomponent fully, revisit
+         * TODO: When firefox support web components fully, revisit
          * this patch and update accordingly
          */
         const contextMenu = app.$.centralContextMenu;
