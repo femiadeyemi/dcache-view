@@ -186,6 +186,7 @@
             {
                 super.connectedCallback();
                 this.$.row.addEventListener('dblclick', ()=>{this._openFileLoc()});
+                this.$.row.addEventListener('contextmenu', (e)=>{this._openContextMenu(e)});
 
                 this.addEventListener('drop', (e)=>{this._drop(e)});
                 this.addEventListener('dragenter', (e)=>{this._dragenter(e)});
@@ -197,6 +198,7 @@
             {
                 super.disconnectedCallback();
                 this.$.row.removeEventListener('dblclick', ()=>{this._openFileLoc()});
+                this.$.row.removeEventListener('contextmenu', (e)=>{this._openContextMenu(e)});
 
                 this.removeEventListener('drop', (e)=>{this._drop(e)});
                 this.removeEventListener('dragenter', (e)=>{this._dragenter(e)});
@@ -338,6 +340,23 @@
                     }
                     window.open(path);
                 }
+            }
+
+            _openContextMenu(event)
+            {
+                event.preventDefault();
+                event.stopPropagation();
+                /**
+                 * TODO: A WORKAROUND: for firefox
+                 */
+                this.dispatchEvent(new MouseEvent('contextmenu', {
+                    view: window,
+                    bubbles: true,
+                    composed: true,
+                    cancelable: true,
+                    clientX: event.clientX,
+                    clientY: event.clientY
+                }));
             }
         }
         window.customElements.define(ListRow.is, ListRow);

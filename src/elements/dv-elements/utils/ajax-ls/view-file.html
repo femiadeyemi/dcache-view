@@ -89,7 +89,7 @@
                 </paper-input>
             </div>
         </paper-dialog>
-        <div class="loading">
+        <div class="loading" id="loading">
             <paper-spinner alt="Loading data" active="{{loading}}"></paper-spinner>
         </div>
 
@@ -137,7 +137,7 @@
                     e.stopPropagation();
                 });
 
-                this.$.content.addEventListener('contextmenu', (e)=>{this._openContextMenu(e)});
+                this.$.loading.addEventListener('contextmenu', (e)=>{this._openContextMenu(e)});
             }
             disconnectedCallback()
             {
@@ -156,7 +156,7 @@
                     e.stopPropagation();
                 });
 
-                this.$.content.removeEventListener('contextmenu', (e)=>{this._openContextMenu(e)});
+                this.$.loading.removeEventListener('contextmenu', (e)=>{this._openContextMenu(e)});
             }
             static get is()
             {
@@ -752,76 +752,23 @@
                 }
             }
 
-            _openContextMenu(e)
+            _openContextMenu(event)
             {
-                e.stopPropagation();
-                e.preventDefault();
-
-                if (app.$.centralContextMenu.opened) {
-                    app.$.centralContextMenu.close();
-                }
-
-                //TODO: Create a Mixin method in the Base Mixin for removing all child nodes of an element
-                while (app.$.centralContextMenu.firstChild) {
-                    app.$.centralContextMenu.removeChild(app.$.centralContextMenu.firstChild);
-                }
-
-                let cc;
-                if (this._xSelectedItems.length === 0 || this._xSelectedItems.length === 1) {
-                    if (this.$.content.querySelector('empty-directory') ||
-                        this.$.content.querySelector('directory-ls-error')) {
-                        cc = new NamespaceContextualContent({"name":this.currentDirName,
-                                "filePath":this.path, "fileType":"DIR"}, 2);
-                    } else {
-                        const lr = e.composedPath().find((el) => {
-                            return el.tagName === "LIST-ROW";
-                        });
-                        cc = new NamespaceContextualContent(lr, 0);
-                    }
-                } else {
-                    cc = new NamespaceContextualContent({files: this._xSelectedItems,
-                            parentPath: this.path}, 1);
-                }
-
-                app.$.centralContextMenu.appendChild(cc);
-
-                let x = 0, y = 0;
-
-                if (e.pageX || e.pageY) {
-                    x = e.pageX;
-                    y = e.pageY;
-                } else if (e.clientX || e.clientY) {
-                    x = e.clientX + document.body.scrollLeft +
-                        document.documentElement.scrollLeft;
-                    y = e.clientY + document.body.scrollTop +
-                        document.documentElement.scrollTop;
-                }
-
-                const vx = window.innerWidth;
-                const vy = window.innerHeight;
-                const w = 250;
-                const h = 340;
-
-                if (vx - x < w && vy - y >= h) {
-                    app.x = x-w;
-                    app.y = y;
-                } else if (vx - x < w && vy - y < h) {
-                    app.x = x-w;
-                    app.y = y-h;
-                } else if (vx - x >= w && vy - y < h) {
-                    app.x = x;
-                    app.y = y-h;
-                } else {
-                    app.x = x;
-                    app.y = y;
-                }
-
-                app.notifyPath('x');
-                app.notifyPath('y');
-                app.$.centralContextMenu.resetFit();
-                app.$.centralContextMenu.open();
-
-                e.stopPropagation();
+                event.preventDefault();
+                event.stopPropagation();
+                /**
+                 * TODO: A WORKAROUND: for firefox
+                 */
+                this.dispatchEvent(new MouseEvent('contextmenu', {
+                    view: window,
+                    bubbles: true,
+                    composed: true,
+                    cancelable: true,
+                    clientX: event.clientX,
+                    clientY: event.clientY,
+                    screenX: event.screenX,
+                    screenY: event.screenY
+                }));
             }
 
             _currentDirName(path)
