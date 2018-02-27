@@ -325,11 +325,7 @@
                 let noOfMovedItems = 1;
                 let fileType = "item";
                 const dialogBox = document.getElementById('centralDialogBox');
-
-                //TODO: Create a Mixin method in the Base Mixin for removing all child nodes of an element
-                while (dialogBox.firstChild) {
-                    dialogBox.removeChild(dialogBox.firstChild);
-                }
+                app.removeAllChildren(dialogBox);
                 const mv = document.createElement('move-file');
                 mv.auth = app.getAuthValue();
                 mv.currentPath = this.currentPath;
@@ -445,11 +441,7 @@
                 app.$.centralContextMenu.close();
 
                 const dialogBox = document.getElementById('centralDialogBox');
-
-                //TODO: Create a Mixin method in the Base Mixin for removing all child nodes of an element
-                while (dialogBox.firstChild) {
-                    dialogBox.removeChild(dialogBox.firstChild);
-                }
+                app.removeAllChildren(dialogBox);
 
                 let mkdir = document.createElement('create-directory');
                 mkdir.dirFullPath = this.currentPath;
