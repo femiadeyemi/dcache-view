@@ -530,7 +530,8 @@
                 }
             }
 
-            _removeXSelected(idx) {
+            _removeXSelected(idx)
+            {
                 this.$.feList.items[idx].xSelected = false;
                 this.$.feList.notifyPath(`items.${idx}.xSelected`);
                 delete this.$.feList.items[idx].xSelected;
@@ -554,13 +555,15 @@
                             let idx0;
                             for (let i = 2; i < len+1; i++ ) {
                                 if (this._temporarySelectedItemsHolder[len-i].keyValue !== "shift") {
-                                    idx0 = this.$.feList.items.indexOf(this._temporarySelectedItemsHolder[len-i].file);
+                                    idx0 =
+                                        this.$.feList.items.indexOf(this._temporarySelectedItemsHolder[len-i].file);
                                     break;
                                 }
                             }
 
                             if (len > 2 && (this._temporarySelectedItemsHolder[len-2].keyValue === "shift")) {
-                                const idx0S = this.$.feList.items.indexOf(this._temporarySelectedItemsHolder[len-2].file);
+                                const idx0S =
+                                    this.$.feList.items.indexOf(this._temporarySelectedItemsHolder[len-2].file);
                                 const idxes = this.__getLoopBoundaries(idx0S, idx1);
                                 for (let i = idxes[0]; i < idxes[1]; i++) {
                                     this._removeXSelected(i);
@@ -613,10 +616,7 @@
 
             __getLoopBoundaries(idx0,idx1)
             {
-                if (idx0 < idx1 || idx0 > idx1) {
-                    return idx0 < idx1 ? [idx0, idx1 + 1] : [idx1, idx0 + 1];
-                }
-                return [];
+                return idx0 < idx1 || idx0 > idx1 ? idx0 < idx1 ? [idx0, idx1 + 1] : [idx1, idx0 + 1] : [];
             }
 
             __getAllItemsXSelected()
@@ -720,10 +720,13 @@
                     this._ctrlKeyOn = false;
                 }
             }
+
             __arrowUpDown_CtrlShift(arrowType)
             {
-                const file = this._temporarySelectedItemsHolder[this._temporarySelectedItemsHolder.length - 1].file;
-                const keyValue = this._temporarySelectedItemsHolder[this._temporarySelectedItemsHolder.length - 1].keyValue;
+                const file =
+                    this._temporarySelectedItemsHolder[this._temporarySelectedItemsHolder.length - 1].file;
+                const keyValue =
+                    this._temporarySelectedItemsHolder[this._temporarySelectedItemsHolder.length - 1].keyValue;
                 const idx = this.__getItemCurrentIndex(file);
 
                 if (keyValue === 'arrow-down' && arrowType === 'up'
