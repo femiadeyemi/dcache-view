@@ -1,0 +1,73 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<<link rel="import" href="../../utils/ajax-ls/view-file.html">
+<dom-module id="shared-directory-view">
+    <template>
+        <style>
+            :host {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                box-sizing: border-box;
+            }
+            #container, app-header-layout, view-file {
+                width: 100%;
+                height: 100%;
+            }
+            .app-header {
+                padding: 0 30px;
+                background: var(--dv-charcoal-grey);
+                height: 45px;
+                border-bottom: solid 1px #ccc;
+                color: #fafafa;
+            }
+            #container {
+                padding: 0 30px;
+                box-sizing: border-box;
+            }
+            list-row-header {
+                margin: 0 !important;
+            }
+        </style>
+        <app-header-layout has-scrolling-region>
+            <app-header slot="header" class="app-header" fixed>
+                <list-row-header></list-row-header>
+            </app-header>
+            <div id="container"></div>
+        </app-header-layout>
+    </template>
+    <script>
+        class SharedDirectoryView extends DcacheViewMixins.Commons(Polymer.Element)
+        {
+            static get is()
+            {
+                return 'shared-directory-view';
+            }
+            constructor()
+            {
+                super();
+            }
+            static get properties()
+            {
+                return {
+                    path: {
+                        type: String,
+                        notify: true,
+                        observer: '_update'
+                    }
+                }
+            }
+            _update(path)
+            {
+                this.removeAllChildren(this.$.container);
+                if (path) {
+                    this.removeAllChildren(this.$.container);
+                    const vf = new ViewFile(path);
+                    vf.authenticationParameters = this.authenticationParameters;
+                    this.$.container.appendChild(vf);
+                    vf.__listDirectory();
+                }
+            }
+        }
+        window.customElements.define(SharedDirectoryView.is, SharedDirectoryView);
+    </script>
+</dom-module>

@@ -131,7 +131,7 @@
                 Polymer.RenderStatus.afterNextRender(this, () => {
                     this.dispatchEvent(
                         new CustomEvent('dv-namespace-current-authenticationParameters', {
-                                detail: {authenticationParameters: this.authenticationParameters},
+                            detail: {authenticationParameters: this.authenticationParameters},
                             bubbles: true, composed: true})
                     );
                 });

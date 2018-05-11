@@ -133,6 +133,32 @@
             app.route = 'user-profile';
             app.params = "";
         });
+        page('/shared-file', function () {
+            app.route = 'shared-file';
+            app.params = "";
+        });
+
+        page('/share-link', function (dt) {
+            /* File Sharing with Macaroons */
+            const arr = dt.querystring.split('&');
+            const path = decodeURIComponent(arr.filter(function(el) {
+                if(el.match('filePath') !== null) return true; })[0].split('=')[1]);
+            const macaroon = arr.filter(function(el) {
+                if(el.match('authz') !== null) return true; })[0].split('=')[1];
+            //const pt = decodeURIComponent(arr[0].replace('filePath=',""));
+
+            //const userAuth = new UserAuthentication({"page":"home", "path":pt}, arr[1].replace('m=',""), '', '');
+            const userAuth = new UserAuthentication(macaroon);
+            userAuth.addEventListener('dv-user-authentication-successful', (e) => {
+                const sharerCredential = e.detail.credential;
+            });
+            /*userAuth.addEventListener('dv-user-authentication-error', (e) => {
+                window.dispatchEvent(new CustomEvent('dv-namespace-show-message-toast',
+                    {detail: {message: e.detail.message}}
+                ));
+            });
+            userAuth.send("Bearer");*/
+        });
 
         // 404
         page('*', function() {

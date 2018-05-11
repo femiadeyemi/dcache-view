@@ -1,0 +1,452 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../../../bower_components/paper-styles/paper-styles.html">
+
+<script src="../../../../bower_components/qr.js/qr.js"></script>
+<dom-module id="file-sharing-form">
+    <template>
+        <style is="custom-style" include="paper-material-styles">
+            :host{
+                display: block;
+                margin: 0 -24px !important;
+                width: 450px;
+                height: 340px;
+                font-size: 0.8em;
+                background: #f7f7f7;
+            }
+            app-toolbar {
+                background: #f7f7f7;
+                color: #333;
+                padding: 0;
+                margin:0 10px;
+            }
+            #linkWrapper {
+                height: 50%;
+            }
+            #macaroonWrapper {
+                height: 15%;
+            }
+            .txt {
+                width: 93%;
+                word-wrap: break-word;
+                text-align: justify;
+                text-justify: inter-word;
+                text-indent: 0;
+                resize: none;
+                overflow-y: scroll;
+            }
+            .loading, .none {
+                display: none;
+            }
+            .loading[is-loading] {
+                position: absolute;
+                height: calc(100% - 65px);
+                top: 55px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: white;
+                text-align: center;
+                font-size: 0.8em;
+            }
+            .loading paper-spinner {
+                width: 40px;
+                height: 40px;
+            }
+            .show {
+                display: flex;
+            }
+            .form {
+                flex-direction: column;
+            }
+            .help-icon {
+                width:15px;
+                height:15px;
+                fill:#3588f4
+            }
+            .help-icon-container {
+                display:inline-block;
+                padding-left: 5px;
+
+            }
+            .in-visible {
+                visibility: hidden;
+            }
+            .paper-material {
+                padding: 15px 15px 5px 15px;
+                border: 1px solid #ccc;
+                margin: 0 15px 15px 15px;
+            }
+            .form-bg-color {
+                background: #fff;
+            }
+            .buttons {
+                display: flex;
+                justify-content: flex-end;
+                padding-right: 10px;
+                padding-left: 10px;
+            }
+            paper-button {
+                text-transform: none;
+            }
+            .buttons paper-button {
+                flex-grow: 1;
+            }
+            .btn {
+                background: #03a9f4;
+                color: white;
+            }
+            .checkboxes-container {
+                flex-wrap: wrap;
+                padding-left: 5px;
+            }
+            .checkbox-wrapper {
+                min-width: 180px;
+                margin: 5px;
+            }
+            .activities {
+                margin-top: 10px;
+            }
+            .description > label {
+                font-size: 0.9em;
+                color: #757575
+            }
+            .validity {
+                display: flex;
+                flex-direction: column;
+                border-top: 1px solid #ccc;
+                margin-top: 10px;
+                padding-top: 10px;
+            }
+            .validity > paper-dropdown-menu {
+                flex-grow: 1;
+            }
+            .textarea-container {
+                width: 270px;
+                height: 160px;
+                box-sizing: border-box;
+            }
+            .image-container {
+                width: 160px;
+                height: 160px;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .image-container > img {
+                width: 140px;
+                margin: 10px;
+            }
+            .link-result {
+                width: 430px;
+                height: 160px;
+                box-sizing: border-box;
+            }
+            #result {
+                padding: 0 10px;
+            }
+            #result > .buttons {
+                padding: 0;
+                margin: 0;
+            }
+            #result > .buttons > paper-button {
+                margin: 0;
+            }
+            #result > .buttons > paper-button+paper-button {
+                margin-left: 5px;
+            }
+        </style>
+        <app-toolbar>
+            <div main-title>Share File</div>
+            <paper-icon-button icon="close" dialog-dismiss></paper-icon-button>
+        </app-toolbar>
+        <div id="form" class="show form">
+            <div class="paper-material form-bg-color" elevation="1">
+                <div><label>Generate a sharable link for the file named: </label><b>[[fileName]]</b></div>
+                <div class="activities">
+                    <div class="description">
+                        <label>Allowed activities</label>
+                        <div class="help-icon-container">
+                            <iron-icon icon="help" class="help-icon"></iron-icon>
+                            <paper-tooltip>
+                                Select allowed operations. No selection means all available permissions are granted.
+                            </paper-tooltip>
+                        </div>
+                    </div>
+
+                    <div class="show checkboxes-container">
+                        <template is="dom-repeat" items="{{activities}}">
+                            <div class="checkbox-wrapper">
+                                <paper-checkbox name="activities"
+                                                checked="{{item.checked}}">[[item.name]]</paper-checkbox>
+                                <div class="help-icon-container in-visible">
+                                    <iron-icon icon="help" class="help-icon"></iron-icon>
+                                    <paper-tooltip>[[item.description]]</paper-tooltip>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="validity">
+                    <div class="description">
+                        <label>Expiration time</label>
+                        <div class="help-icon-container">
+                            <iron-icon icon="help" class="help-icon"></iron-icon>
+                            <paper-tooltip>For how long do you want to share this file?</paper-tooltip>
+                        </div>
+                    </div>
+                    <paper-dropdown-menu label="Expiration time" name="validity" id="validity"
+                                         vertical-align="bottom" horizontal-align="left" required no-label-float>
+                        <paper-listbox slot="dropdown-content" class="dropdown-content" selected="1">
+                            <paper-item value="PT1H">1 Hour</paper-item>
+                            <paper-item value="PT3H">3 Hours</paper-item>
+                            <paper-item value="PT6H">6 Hours</paper-item>
+                            <paper-item value="PT12H">12 Hours</paper-item>
+                            <paper-item value="P1D">1 Day</paper-item>
+                            <paper-item value="P2D">2 Days</paper-item>
+                            <paper-item value="P5D">5 Days</paper-item>
+                            <paper-item value="P1W">1 Week</paper-item>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button id="linkBtn" class="btn" on-tap="_getLink" raised>Get the link</paper-button>
+            </div>
+        </div>
+
+        <div id="result" class="none form">
+            <div>
+                <p>
+                    File name: <b>[[fileName]]</b>. Copy the generated link or download the QR code.
+                </p>
+            </div>
+            <div class="show link-result">
+                <div class="textarea-container">
+                    <div>
+                        <span>Link:</span>
+                    </div>
+                    <textarea id="linkWrapper" class="txt" readonly title="">[[generatedLink]]</textarea>
+                    <div>
+                        <span>Macaroon:</span>
+                    </div>
+                    <textarea id="macaroonWrapper" class="txt" readonly title="">[[macaroon]]</textarea>
+                </div>
+                <div class="image-container paper-material" elevation="1">
+
+                    <img src$="[[src]]">
+                </div>
+            </div>
+            <br>
+            <div class="buttons">
+                <paper-button class="btn" dialog-dismiss raised>Done</paper-button>
+                <paper-button on-tap="_copyMacaroon" raised>
+                    Copy macaroon
+                </paper-button>
+                <paper-button on-tap="_copyLink" raised>
+                    <iron-icon icon="link"></iron-icon>
+                    Copy link
+                </paper-button>
+                <paper-button on-tap="_downloadQR" raised>
+                    <iron-icon icon="file-download"></iron-icon>
+                    Download the QR code</paper-button>
+            </div>
+        </div>
+        <div class="loading" is-loading$="[[loading]]">
+            <paper-spinner alt="waiting for response" active="{{loading}}"></paper-spinner>
+            <span>processing your request ...</span>
+        </div>
+    </template>
+    <script>
+        class FileSharingForm extends Polymer.Element
+        {
+            constructor(fn,fp)
+            {
+                super();
+                this.fileName = fn;
+                this.fullPath = fp;
+            }
+            static get is()
+            {
+                return "file-sharing-form";
+            }
+            static get properties()
+            {
+                return {
+                    fileName: {
+                        type: String,
+                        notify: true
+                    },
+                    fullPath: {
+                        type: String,
+                        notify: true
+                    },
+                    generatedLink: {
+                        type: String,
+                        notify: true
+                    },
+                    macaroon: {
+                        type: String,
+                        notify: true
+                    },
+                    src: {
+                        type: String,
+                        notify: true
+                    },
+                    activities: {
+                        type: Array,
+                        value: function () {
+                            return [
+                                {name: 'Download', description: '', checked: true},
+                                {name: 'Upload', description: '', checked: true},
+                                {name: 'Delete', description: '', checked: true},
+                                {name: 'List', description: '', checked: true},
+                            ];
+                        },
+                        notify: true
+                    },
+                    loading: {
+                        type: Boolean,
+                        value: true,
+                        notify: true
+                    },
+                    isFormSwitchON: {
+                        type: Boolean,
+                        value: true,
+                        notify: true
+                    }
+                }
+            }
+            static get observers()
+            {
+                return ['_formSwitchChanged(isFormSwitchON)']
+            }
+            connectedCallback()
+            {
+                super.connectedCallback();
+            }
+            disconnectedCallback()
+            {
+                super.disconnectedCallback();
+            }
+            _getLink()
+            {
+                const v = this.$.validity.selectedItem.getAttribute("value");
+                const activitiesList = [];
+                for (let i=0; i<4; i++) {
+                    if (this.activities[i].checked) activitiesList.push(this.activities[i].name.toUpperCase());
+                }
+                this.loading = true;
+                const shareableLinkWorker = new Worker('./scripts/tasks/macaroon-request-task.js');
+                shareableLinkWorker.addEventListener('message', (e) => {
+                    const message = e.data;
+                    shareableLinkWorker.terminate();
+                    this.macaroon = message.macaroon;
+                    console.log(message);
+                    this._createLinkAndQRCode()
+                }, false);
+                shareableLinkWorker.addEventListener('error', (e) => {
+                    //FIXME -  incomplete code
+                    shareableLinkWorker.terminate();
+                    this.isFormSwitchON = true;
+                    window.dispatchEvent(new CustomEvent('dv-namespace-show-message-toast', {
+                        detail: {message: "Sharing failed: There was a problem with your operation. " +
+                                "Please contact your admin."}, bubbles: true, composed: true}));
+                }, false);
+                shareableLinkWorker.postMessage({
+                    "url": `${window.CONFIG["dcache-view.endpoints.webdav"].slice(0, -1)}${this.fullPath}`,
+                    "body": {
+                        "caveats": activitiesList.length > 0 ?
+                            [`path:${this.fullPath}`, `activity: ${activitiesList.join()}`] : [`path:${this.fullPath}`],
+                        "validity":`${this.$.validity.selectedItem.getAttribute("value")}`
+                    },
+                    "usesCert": !!sessionStorage.getItem("hasAuthClientCertificate"),
+                    'upauth' : sessionStorage.getItem('upauth'),
+                })
+            }
+            _createLinkAndQRCode()
+            {
+                this.generatedLink =
+                    `${window.location.href}#!/share-link?filePath=${encodeURIComponent(this.fullPath)}&authz=${this.macaroon}`;
+                this.src = QRCode.generatePNG(this.generatedLink, {
+                    modulesize: 5,
+                    margin: 4,
+                    version: -1,
+                    ecclevel: "L",
+                    mask: -1,
+                });
+                this.isFormSwitchON = false;
+                this.$.linkWrapper.focus();
+                this.$.linkWrapper.setSelectionRange(0,this.$.linkWrapper.value.length);
+            }
+            _copy(id)
+            {
+                const copiedLink = this.$[id];
+                copiedLink.select();
+                try {
+                    const successful = document.execCommand('copy');
+                    const msg = successful ? 'successful' : 'unsuccessful';
+                    const linkOrMacaroon = id === "linkWrapper"? 'Link' : 'Macaroon';
+                    window.dispatchEvent(new CustomEvent('dv-namespace-show-message-toast',
+                        {detail: {message: `${linkOrMacaroon} copied ${msg}`}}
+                    ));
+                } catch (err) {
+                    window.dispatchEvent(new CustomEvent('dv-namespace-show-message-toast',
+                        {detail: {message: `Oops, unable to copy. ${err.message}`}}
+                    ));
+                }
+            }
+            _copyLink()
+            {
+                this._copy("linkWrapper");
+            }
+            _copyMacaroon()
+            {
+                this._copy("macaroonWrapper");
+            }
+            _downloadQR()
+            {
+                const a = document.createElement('a');
+                a.href = this.src;
+                a.download = `${this.fileName}_qrcode.png`;
+                a.click();
+            }
+            _formSwitchChanged(isFormSwitchON)
+            {
+                if (isFormSwitchON) {
+                    this.$.form.classList.remove("none");
+                    this.$.form.classList.add("show");
+
+                    this.$.result.classList.add("none");
+                    this.$.result.classList.remove("show");
+
+                } else if (isFormSwitchON === false) {
+                    this.$.form.classList.remove("show");
+                    this.$.form.classList.add("none");
+
+                    this.$.result.classList.add("show");
+                    this.$.result.classList.remove("none");
+                }
+                this.loading = false;
+            }
+        }
+        window.customElements.define(FileSharingForm.is, FileSharingForm);
+    </script>
+</dom-module>
