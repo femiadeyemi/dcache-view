@@ -134,6 +134,25 @@
             app.params = "";
         });
 
+        page('/shared-file', function (dt) {
+            /* File Sharing with Macaroons */
+            const query = dt.querystring;
+            const arr = query.split('&');
+            const pt = decodeURIComponent(arr[0].replace('filePath=',""));
+            const m = arr[1].replace('m=',"");
+            console.log(pt);
+            console.log(m);
+
+            const redirectInfoObj = {"page":"home", "path":pt};
+            const userAuth = new UserAuthentication(redirectInfoObj, m, '', '');
+            userAuth.addEventListener('error', (e) => {
+                window.dispatchEvent(new CustomEvent('dv-namespace-show-message-toast',
+                    {detail: {message: e.detail.message}}
+                ));
+            });
+            userAuth.send("Bearer");
+        });
+
         // 404
         page('*', function() {
             /**
