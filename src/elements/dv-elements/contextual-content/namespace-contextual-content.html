@@ -4,6 +4,7 @@
 <link rel="import" href="../../../bower_components/paper-item/paper-icon-item.html">
 
 <link rel="import" href="../qbi-dialog-content/qbi-dialog-content.html">
+<link rel="import" href="../preview-file/viewer/pdf-viewer.html">
 <dom-module id="namespace-contextual-content">
     <template>
         <style>
@@ -61,7 +62,7 @@
                               class$="[[_computedClass('open', singleSelection,
                               multipleSelection, currentDir, targetNode)]]">
                 <iron-icon icon="visibility" slot="item-icon"></iron-icon>
-                Open
+                [[openOrPreview]]
             </paper-icon-item>
 
             <paper-icon-item id="changeQos"
@@ -162,6 +163,10 @@
                     },
                     currentPath: {
                         type: String,
+                    },
+                    openOrPreview: {
+                        type: Boolean,
+                        notify: true
                     }
                 }
             }
@@ -183,10 +188,13 @@
 
                     switch (this.targetNode.fileMetaData.fileType) {
                         case "DIR":
+                            this.openOrPreview = 'Open';
                             this.$.open.addEventListener('tap', this._openOrDownload.bind(this));
                             break;
                         case "REGULAR":
+                            this.openOrPreview = 'Preview';
                             this.$.download.addEventListener('tap', this._openOrDownload.bind(this));
+                            this.$.open.addEventListener('tap', this._preview.bind(this));
                             break;
                     }
 
@@ -225,6 +233,7 @@
                             break;
                         case "REGULAR":
                             this.$.download.removeEventListener('tap', this._openOrDownload.bind(this));
+                            this.$.open.removeEventListener('tap', this._preview.bind(this));
                             break;
                     }
 
@@ -263,6 +272,21 @@
                 this.dispatchEvent(
                     new CustomEvent('dv-namespace-namespace-open-file', {
                         detail: {file: this.targetNode}, bubbles: true, composed: true}));
+            }
+
+            _preview()
+            {
+                app.$.centralContextMenu.close();
+
+                const preview = new PdfViewer(this.targetNode.fileMetaData.fileName,
+                    this.currentPath.endsWith('/') ? `${this.currentPath}${this.targetNode.fileMetaData.fileName}`:
+                    `${this.currentPath}/${this.targetNode.fileMetaData.fileName}`);
+
+                app.$.previewFile.appendChild(preview);
+                app.$.previewFile.open();
+                /*this.dispatchEvent(
+                    new CustomEvent('dv-namespace-namespace-open-central-dialogbox', {
+                        detail: {node: preview}, bubbles: true, composed: true}));*/
             }
 
             _metadata()
@@ -501,7 +525,7 @@
                     if (t.fileMetaData.fileType === 'DIR' && (id === 'download' || id === 'changeQos')) {
                         this.$[id].setAttribute('disabled', "");
                     } else if (id  === 'open' && t.fileMetaData.fileType === 'REGULAR') {
-                        this.$[id].setAttribute('disabled', "");
+                        //this.$[id].setAttribute('disabled', "");
                     }
                 }
                 if (!window.CONFIG.isSomebody && id === 'changeQos') {
