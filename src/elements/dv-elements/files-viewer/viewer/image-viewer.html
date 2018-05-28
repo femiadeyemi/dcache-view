@@ -1,0 +1,157 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<dom-module id="images-viewer">
+    <template>
+        <style>
+            :host {
+                display: block;
+                width: 100vw;
+                height: 100vh;
+                margin: -24px -40px ;
+                background: transparent;
+            }
+            app-header-layout {
+                width: 100%;
+                height: 100%;
+            }
+            #main-content {
+                display: flex;
+                justify-content: center;
+            }
+        </style>
+        <app-header-layout has-scrolling-region>
+            <app-header slot="header" fixed>
+                <app-toolbar>
+                    <paper-icon-button icon="close" on-tap="_close"></paper-icon-button>
+                    <div main-title>[[fileName]]</div>
+                </app-toolbar>
+            </app-header>
+            <div id="main-content">
+                <img id="image">
+            </div>
+        </app-header-layout>
+    </template>
+    <script>
+        class PdfViewer extends Polymer.Element
+        {
+            constructor(fn, fp)
+            {
+                super();
+                this.fileName = fn;
+                this.fileLocation = `${window.CONFIG["dcache-view.endpoints.webdav"].slice(0, -1)}${fp}`;
+
+                /**
+                 * Asynchronously downloads PDF.
+                 */
+                this.pdfjsLib = window['pdfjs-dist/build/pdf'];
+                this.pdfjsLib.GlobalWorkerOptions.workerSrc =
+                    `${window.location.href}bower_components/pdfjs-dist/build/pdf.worker.min.js`;
+            }
+            static get is()
+            {
+                return 'pdf-viewer';
+            }
+            static get properties()
+            {
+                return {
+                    fileName: {
+                        type: String,
+                        notify: true
+                    },
+                    fileLocation: {
+                        type: String
+                    },
+                    pdfjsLib: {
+                        type: Object,
+                        notify: true
+                    },
+                    pdfDoc: {
+                        type: Object
+                    },
+                    pageRendering: {
+                        type: Boolean,
+                        value: false,
+                    },
+                    pageNumPending: {
+                        type: String,
+                        value: null
+                    },
+                    pageNum: {
+                        type: Number,
+                        value: 1,
+                        notify: true
+                    }
+                }
+            }
+            ready()
+            {
+                super.ready();
+            }
+            _close()
+            {
+                app.$.previewFile.close();
+            }
+            _renderPage(num)
+            {
+                this.pageRendering = true;
+                const canvas = this.$.canvas;
+                const ctx = canvas.getContext('2d');
+
+                // Using promise to fetch the page
+                this.pdfDoc.getPage(num).then((page) => {
+                    const viewport = page.getViewport(1.5);
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    // Render PDF page into canvas context
+                    const renderContext = {
+                        canvasContext: ctx,
+                        viewport: viewport
+                    };
+
+                    const renderTask = page.render(renderContext);
+
+                    // Wait for rendering to finish
+                    renderTask.promise.then(() => {
+                        this.pageRendering = false;
+                        if (this.pageNumPending !== null) {
+                            // New page rendering is pending
+                            this._renderPage(this.pageNumPending);
+                            this.pageNumPending = null;
+                        }
+                    });
+                });
+            }
+            _queueRenderPage(num)
+            {
+                if (this.pageRendering) {
+                    this.pageNumPending = num;
+                } else {
+                    this._renderPage(num);
+                }
+            }
+
+            _onPrevPage()
+            {
+                if ( this.pageNum <= 1) {
+                    return;
+                }
+                this.pageNum--;
+                this._queueRenderPage(this.pageNum);
+            }
+            _onNextPage()
+            {
+                if (this.pageNum >= this.pdfDoc.numPages) {
+                    return;
+                }
+                this.pageNum++;
+                this._queueRenderPage(this.pageNum);
+            }
+        }
+        window.customElements.define(PdfViewer.is, PdfViewer);
+    </script>
+</dom-module>

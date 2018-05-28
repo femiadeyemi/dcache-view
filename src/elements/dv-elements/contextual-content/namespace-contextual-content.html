@@ -4,7 +4,7 @@
 <link rel="import" href="../../../bower_components/paper-item/paper-icon-item.html">
 
 <link rel="import" href="../qbi-dialog-content/qbi-dialog-content.html">
-<link rel="import" href="../preview-file/viewer/pdf-viewer.html">
+<link rel="import" href="../files-viewer/files-viewer-controller.html">
 <dom-module id="namespace-contextual-content">
     <template>
         <style>
@@ -194,7 +194,7 @@
                         case "REGULAR":
                             this.openOrPreview = 'Preview';
                             this.$.download.addEventListener('tap', this._openOrDownload.bind(this));
-                            this.$.open.addEventListener('tap', this._preview.bind(this));
+                            this.$.open.addEventListener('tap', this._viewer.bind(this));
                             break;
                     }
 
@@ -233,7 +233,7 @@
                             break;
                         case "REGULAR":
                             this.$.download.removeEventListener('tap', this._openOrDownload.bind(this));
-                            this.$.open.removeEventListener('tap', this._preview.bind(this));
+                            this.$.open.removeEventListener('tap', this._viewer.bind(this));
                             break;
                     }
 
@@ -274,18 +274,18 @@
                         detail: {file: this.targetNode}, bubbles: true, composed: true}));
             }
 
-            _preview()
+            _viewer()
             {
                 app.$.centralContextMenu.close();
 
-                const preview = new PdfViewer(this.targetNode.fileMetaData.fileName,
+                const fileViewerContoller = new FilesViewerController(this.targetNode.fileMetaData.fileName,
                     this.currentPath.endsWith('/') ? `${this.currentPath}${this.targetNode.fileMetaData.fileName}`:
                     `${this.currentPath}/${this.targetNode.fileMetaData.fileName}`);
 
-                app.$.previewFile.appendChild(preview);
-                app.$.previewFile.open();
+                app.$.fileViewOverlay.appendChild(fileViewerContoller);
+                app.$.fileViewOverlay.open();
                 /*this.dispatchEvent(
-                    new CustomEvent('dv-namespace-namespace-open-central-dialogbox', {
+                    new CustomEvent('dv-namespace-namespace-open-files-viewer-overlay', {
                         detail: {node: preview}, bubbles: true, composed: true}));*/
             }
 

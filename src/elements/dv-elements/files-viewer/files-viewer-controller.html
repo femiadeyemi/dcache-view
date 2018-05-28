@@ -1,0 +1,62 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../files-viewer/viewer/pdf-viewer.html">
+<link rel="import" href="viewer/odf-viewer.html">
+<!--<link rel="import" href="../files-viewer/viewer/root-viewer.html">
+<link rel="import" href="../files-viewer/viewer/image-viewer.html">-->
+
+<dom-module id="files-viewer-controller">
+    <template>
+        <style>
+            :host {
+                display: block;
+                width: 100vw;
+                height: 100vh;
+                margin: -24px -40px ;
+                background: transparent;
+            }
+        </style>
+        <div id="controller"></div>
+        <!--<paper-spinner></paper-spinner>-->
+    </template>
+    <script>
+        class FilesViewerController extends Polymer.Element
+        {
+            constructor(fn,fp)
+            {
+                super();
+                this.fileName = fn;
+                this.fileLocation = `${window.CONFIG["dcache-view.endpoints.webdav"].slice(0, -1)}${fp}`;
+            }
+            static get is()
+            {
+                return 'files-viewer-controller';
+            }
+            static get properties()
+            {
+                return {
+                    fileName: {
+                        type: String,
+                        notify: true
+                    },
+                    fileLocation: {
+                        type: String
+                    }
+                }
+            }
+            connectedCallback()
+            {
+                super.connectedCallback();
+
+                const pdf = new OdfViewer(this.fileName, this.fileLocation);
+
+                this.$.controller.appendChild(pdf);
+            }
+            disconnectedCallback()
+            {
+                super.disconnectedCallback();
+            }
+        }
+        window.customElements.define(FilesViewerController.is, FilesViewerController);
+    </script>
+</dom-module>

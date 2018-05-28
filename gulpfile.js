@@ -52,6 +52,15 @@ gulp.task('copy-pdfjs', function() {
         .pipe(gulp.dest('./target/bower_components/pdfjs-dist/build'));
 });
 
+gulp.task('copy-odtjs', function() {
+    return gulp.src([
+        './src/elements/dv-elements/files-viewer/viewer/ext-lib/webodfjs/*'
+    ], {
+        base: ''
+    })
+        .pipe(gulp.dest('./target/bower_components/webodfjs'));
+});
+
 gulp.task('copy-css', function() {
     return gulp.src([
         'src/styles/main.css'
@@ -84,5 +93,5 @@ gulp.task('vulcanize', function() {
 gulp.task('build', ['copy-favicons', 'copy-index', 'copy-robots', 'copy-css', 'copy-script']);
 
 gulp.task('default', ['bower', 'build'], function () {
-    gulp.start('vulcanize','copy-webcomponents', 'copy-pdfjs');
+    gulp.start('vulcanize','copy-webcomponents', 'copy-pdfjs', 'copy-odtjs');
 });

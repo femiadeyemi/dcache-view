@@ -367,7 +367,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <central-dialog-box id="centralDialogBox" modal role="alertdialog">
                 </central-dialog-box>
 
-                <preview-file id="previewFile" with-backdrop scroll-action="lock"></preview-file>
+                <files-viewer-overlay id="fileViewOverlay" with-backdrop
+                                      scroll-action="lock"></files-viewer-overlay>
 
                 <!--  HERE IS A CUSTOM CONTEXT MENU BOX -->
                 <paper-dialog id="centralContextMenu" vertical-align="top"
@@ -410,6 +411,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </template>
             <script src="scripts/dv.js"></script>
             <script src="bower_components/pdfjs-dist/build/pdf.min.js" async></script>
+            <script src="bower_components/webodfjs/webodf.js" async></script>
         </dom-bind>
     </body>
 </html>

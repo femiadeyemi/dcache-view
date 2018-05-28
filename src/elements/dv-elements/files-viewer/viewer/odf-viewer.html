@@ -1,0 +1,66 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="odf-viewer">
+    <template>
+        <style>
+            #odf {
+                width: 100vw;
+                height: 100vh;
+            }
+        </style>
+        <div id="odf"></div>
+    </template>
+    <script>
+        class OdfViewer extends Polymer.Element
+        {
+            constructor(fn, fp)
+            {
+                super();
+                this.fileName = fn;
+                this.fileLocation = fp;
+
+                /*console.log(document.getElementById('odf-script'));
+                if (document.getElementById('odf-script') === null){
+                    const script = document.createElement('script');
+                    script.id = 'odf-script';
+
+                    script.src = 'bower_components/webodfjs/webodf.js';
+                    document.head.appendChild(script);
+                }*/
+            }
+            static get is()
+            {
+                return 'odf-viewer';
+            }
+            static get properties()
+            {
+                return {
+                    fileName: {
+                        type: String,
+                        notify: true
+                    },
+                    fileLocation: {
+                        type: String,
+                        notify: true
+                    }
+                }
+            }
+            connectedCallback()
+            {
+                super.connectedCallback();
+                this._open();
+            }
+            disconnectedCallback()
+            {
+                super.disconnectedCallback();
+            }
+            _open()
+            {
+                const odfelement = this.$.odf,
+                    odfcanvas = new odf.OdfCanvas(odfelement);
+                odfcanvas.load(this.fileLocation);
+            }
+        }
+        window.customElements.define(OdfViewer.is, OdfViewer);
+    </script>
+</dom-module>
