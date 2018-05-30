@@ -308,13 +308,13 @@
                     ));
                     return;
                 }
-                const f = new FileSharingForm(this.targetNode.fileMetaData.fileName,
+                const fileSharingForm = new FileSharingForm(this.targetNode.fileMetaData.fileName,
                     this.currentPath.endsWith('/') ?
                     `${this.currentPath}${this.targetNode.fileMetaData.fileName}`:
                     `${this.currentPath}/${this.targetNode.fileMetaData.fileName}`);
                 this.dispatchEvent(
                     new CustomEvent('dv-namespace-namespace-open-central-dialogbox', {
-                        detail: {node: f},
+                        detail: {node: fileSharingForm},
                         bubbles: true, composed: true}));
             }
 

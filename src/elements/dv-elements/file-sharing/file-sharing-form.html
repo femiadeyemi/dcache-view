@@ -177,8 +177,8 @@
                         <label>Allowed activities</label>
                         <div class="help-icon-container">
                             <iron-icon icon="help" class="help-icon"></iron-icon>
-                            <paper-tooltip>Set what operations are allowed. If nothing is selected all available
-                                permission will be granted.
+                            <paper-tooltip>
+                                Select allowed operations. No selection means all available permissions are granted.
                             </paper-tooltip>
                         </div>
                     </div>
@@ -350,7 +350,7 @@
                 } catch (e) {
                     this.isFormSwitchON = true;
                     window.dispatchEvent(new CustomEvent('dv-namespace-show-message-toast', {
-                        detail: {message: "Sharing failed: There has been a problem with your operation. " +
+                        detail: {message: "Sharing failed: There was a problem with your operation. " +
                             "Please contact your admin."}, bubbles: true, composed: true}));
                 }
             }
