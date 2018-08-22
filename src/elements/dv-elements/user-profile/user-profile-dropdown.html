@@ -1,0 +1,212 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="../user-profile/user-image.html">
+<dom-module id="user-profile-dropdown">
+    <template>
+        <style>
+            .dropdown {
+                float: right;
+                position: relative;
+                display: inline-block;
+            }
+            .dropbtn {
+                /*background-color: #3498DB;
+                color: white;
+                padding: 16px;
+                font-size: 16px;
+                border: none;*/
+                cursor: pointer;
+                display: flex;
+            }
+            .dropdown-content {
+                display: none;
+                /*position: absolute;
+                background-color: #fff;
+                min-width: 200px;
+                overflow: auto;
+                box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+                right: 0;
+                z-index: 1;
+                border: 1px solid rgba(27,31,35,0.15);
+                border-radius: 4px;*/
+
+                position: absolute;
+                top: 100%;
+                left: auto;
+                right: 0;
+                z-index: 100;
+                width: 180px;
+                margin-top: 8px;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                list-style: none;
+                background-color: #fff;
+                background-clip: padding-box;
+                border: 1px solid rgba(27,31,35,0.15);
+                border-radius: 4px;
+                box-shadow: 0 3px 12px rgba(27,31,35,0.15);
+            }
+            .dropdown-content::before {
+                top: -16px;
+                right: 9px;
+                left: auto;
+                border: 8px solid transparent;
+                border-bottom-color: rgba(27,31,35,0.15);
+            }
+            .dropdown-content::after {
+                top: -14px;
+                right: 10px;
+                left: auto;
+                border: 7px solid transparent;
+                border-bottom-color: #fff;
+            }
+            .dropdown-content::before, .dropdown-content::after {
+                position: absolute;
+                display: inline-block;
+                content: "";
+            }
+            .dropdown-content > .item {
+                padding: 12px 16px;
+                text-decoration: none;
+            }
+            .dropdown-content .header {
+                display: flex;
+                flex-direction: column;
+                color: black;
+            }
+            .dropdown-content .selectable {
+                color: black;
+            }
+            .dropdown .selectable:hover {
+                background-color: #3498DB;
+                color: #fff;
+            }
+            .show {
+                display: block;
+            }
+            user-image {
+                --user-image-border-radius: 5px;
+            }
+            .dropdown-content .dropdown-divider {
+                height: 1px;
+                margin: 8px 1px;
+                background-color: #e1e4e8;
+            }
+            iron-icon {
+                width: 15px;
+            }
+        </style>
+        <div class="dropdown">
+            <div on-tap="_open" class="dropbtn">
+                <user-image size="20" fallback-value="[[username]]" email="[[email]]"></user-image>
+                <iron-icon icon="icons:arrow-drop-down"></iron-icon>
+            </div>
+            <div id="dropdownPanel" class="dropdown-content">
+                <div class="item header">
+                    <span>Logged in as</span>
+                    <strong>[[username]]</strong>
+                </div>
+                <div class="dropdown-divider"></div>
+                <div class="item selectable" on-tap="_userProfile">Your profile</div>
+                <div class="item selectable" on-tap="_lsHome">Your home directory</div>
+                <div class="dropdown-divider"></div>
+                <div class="item selectable" on-tap="_loginout">[[x]]</div>
+            </div>
+        </div>
+    </template>
+    <script>
+        class UserProfileDropdown extends Polymer.Element
+        {
+            constructor(name, email)
+            {
+                super();
+                if (name) this.username = name;
+                if (email) this.email = email;
+                this._clickListener = this._dismissListener.bind(this);
+
+                switch (sessionStorage.getItem("hasAuthClientCertificate")) {
+                    case 'true':
+                        const scheme = sessionStorage.getItem("authType");
+                        this.x = scheme === "Basic" || scheme === "Bearer" ?
+                            'Log out of added credential' : 'Add another credential';
+                        break;
+                    default:
+                        this.x = 'Log out';
+                }
+            }
+            static get is()
+            {
+                return 'user-profile-dropdown';
+            }
+            static get properties()
+            {
+                return {
+                    username: {
+                        type: String,
+                        notify: true,
+                    },
+                    email: {
+                        type: String,
+                        notify: true,
+                    },
+                    x: {
+                        type: String,
+                        notify: true,
+                    }
+                }
+            }
+            connectedCallback()
+            {
+                super.connectedCallback();
+                window.addEventListener('click', this._clickListener);
+            }
+            disconnectedCallback()
+            {
+                super.disconnectedCallback();
+                window.removeEventListener('click', this._clickListener);
+            }
+            _userProfile()
+            {
+                this.$.dropdownPanel.classList.remove('show');
+                page('/user-profile');
+            }
+            _lsHome()
+            {
+                this.dispatchEvent(
+                    new CustomEvent('dv-namespace-ls-path', {
+                        detail: {path: sessionStorage.getItem('homeDirectory')}, bubbles: true, composed: true}));
+                this.$.dropdownPanel.classList.remove('show');
+            }
+            _open(e)
+            {
+                this.$.dropdownPanel.classList.toggle("show");
+            }
+            _dismissListener(ev)
+            {
+                if (!(ev.target.tagName === "AUTH-SCHEME-TOGGLE")) {
+                    if (this.$.dropdownPanel.classList.contains('show')) {
+                        this.$.dropdownPanel.classList.remove('show');
+                    }
+                }
+            }
+            _loginout()
+            {
+                this.$.dropdownPanel.classList.remove('show');
+                if (this.x.includes('Log out')) {
+                    //logout
+                    //TODO: think of showing a message that the user is being logged out
+                    sessionStorage.clear();
+                    Polymer.dom.flush();
+                    this.updateStyles();
+                    window.location.reload();
+                } else {
+                    //login with another credential
+                    this.dispatchEvent(new CustomEvent('dv-authentication-req-login', {bubbles: true,
+                        composed: true}));
+                }
+            }
+        }
+        window.customElements.define(UserProfileDropdown.is, UserProfileDropdown);
+    </script>
+</dom-module>

@@ -61,6 +61,24 @@ gulp.task('copy-script', function() {
         .pipe(gulp.dest('./target/scripts'));
 });
 
+gulp.task('scheduler', function() {
+    return gulp.src([
+        'src/scripts/onload-scheduler.js'
+    ], {
+        base: ''
+    })
+        .pipe(gulp.dest('./target/scripts'));
+});
+
+gulp.task('cp-tasks', function() {
+    return gulp.src([
+        'src/scripts/tasks/*'
+    ], {
+        base: ''
+    })
+        .pipe(gulp.dest('./target/scripts/tasks'));
+});
+
 gulp.task('vulcanize', function() {
     return gulp.src('src/elements/elements.html')
         .pipe(vulcanize({
@@ -72,7 +90,7 @@ gulp.task('vulcanize', function() {
         .pipe(gulp.dest('./target/elements'));
 });
 
-gulp.task('build', ['copy-favicons', 'copy-index', 'copy-robots', 'copy-css', 'copy-script']);
+gulp.task('build', ['copy-favicons', 'copy-index', 'copy-robots', 'copy-css', 'copy-script', 'scheduler', 'cp-tasks']);
 
 gulp.task('default', ['bower', 'build'], function () {
     gulp.start('vulcanize','copy-webcomponents');

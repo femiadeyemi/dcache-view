@@ -137,7 +137,9 @@
                 if (window.CONFIG.isSomebody) {
                     if (this.redirectInformation.page === "home") {
                         page("/");
-                        app.ls(this.redirectInformation.path);
+                        this.dispatchEvent(
+                            new CustomEvent('dv-namespace-ls-path', {
+                                detail: {path: this.redirectInformation.path}, bubbles: true, composed: true}));
                     } else {
                         page("/"+this.redirectInformation.page);
                     }
