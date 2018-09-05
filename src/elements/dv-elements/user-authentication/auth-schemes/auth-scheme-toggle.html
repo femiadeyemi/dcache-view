@@ -20,7 +20,6 @@
                 this._successfulListener = this._successfulAuthenticationListener.bind(this);
                 this._errorListener = this._failedAuthenticationListener.bind(this);
                 this._setCurrentPath_ = this._setCurrentPath.bind(this);
-                this._requestLoginForm_ = this._login.bind(this);
             }
             static get is()
             {
@@ -29,6 +28,7 @@
             ready()
             {
                 super.ready();
+                this.$.container.addEventListener('dv-authentication-req-login', this._login.bind(this));
                 Polymer.RenderStatus.afterNextRender(this, ()=> {
                     this._toggle();
                 })
@@ -39,7 +39,6 @@
                 window.addEventListener('dv-authentication-successful', this._successfulListener);
                 window.addEventListener('dv-authentication-error', this._errorListener);
                 window.addEventListener('dv-namespace-current-path', this._setCurrentPath_);
-                window.addEventListener('dv-authentication-req-login', this._requestLoginForm_);
 
                 this.dispatchEvent(
                     new CustomEvent('dv-namespace-request-current-path', {bubbles: true, composed: true})
@@ -51,12 +50,15 @@
                 window.removeEventListener('dv-authentication-successful', this._successfulListener);
                 window.removeEventListener('dv-authentication-error', this._errorListener);
                 window.removeEventListener('dv-namespace-current-path', this._setCurrentPath_);
-                window.removeEventListener('dv-authentication-req-login', this._requestLoginForm_);
             }
             static get properties()
             {
                 return {
                     currentRoute: {
+                        type: String,
+                        notify: true
+                    },
+                    currentPath: {
                         type: String,
                         notify: true
                     }
