@@ -669,6 +669,7 @@
         app.$.toast.show()
     });
     window.addEventListener('dv-namespace-ls-path', (e) => {
+        if (app.route !== "home") page("/");
         app.ls(e.detail.path);
     });
 })(document);
