@@ -666,4 +666,12 @@
         window.CONFIG.isAdmin = e.detail.roles.includes('admin');
         app.notifyPath('config.isAdmin');
     });
+    window.addEventListener('dv-namespace-open-files-viewer',(e)=>{
+        app.removeAllChildren(app.$.filesViewerOverlay);
+        app.$.filesViewerOverlay.appendChild(e.detail.node);
+        app.$.filesViewerOverlay.open();
+    });
+    window.addEventListener('dv-namespace-close-files-viewer',(e)=>{
+        app.$.filesViewerOverlay.close();
+    });
 })(document);

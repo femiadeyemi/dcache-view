@@ -79,6 +79,9 @@
                 } else {
                     this.$.preTag.innerHTML = this._prettyPrintJSON(JSON.stringify(json, undefined, 4));
                     this.isLoading = false;
+                    this.dispatchEvent(
+                        new CustomEvent('dv-namespace-files-viewer-finished-loading', {bubbles:true, composed:true})
+                    );
                 }
             }
         }
