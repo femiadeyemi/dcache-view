@@ -1,0 +1,19 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="image-viewer">
+    <template>
+        <style>
+            :host {
+                margin: auto;
+            }
+            .none {
+                display: none;
+            }
+            #img {
+                transform: rotate(0deg);
+            }
+        </style>
+        <img id="img" class="none" width$="[[_width]]" height$="[[_height]]">
+    </template>
+    <script src="image-viewer.js"></script>
+</dom-module>
