@@ -11,26 +11,11 @@
                 display: inline-block;
             }
             .dropbtn {
-                /*background-color: #3498DB;
-                color: white;
-                padding: 16px;
-                font-size: 16px;
-                border: none;*/
                 cursor: pointer;
                 display: flex;
             }
             .dropdown-content {
                 display: none;
-                /*position: absolute;
-                background-color: #fff;
-                min-width: 200px;
-                overflow: auto;
-                box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-                right: 0;
-                z-index: 1;
-                border: 1px solid rgba(27,31,35,0.15);
-                border-radius: 4px;*/
-
                 position: absolute;
                 top: 100%;
                 left: auto;
@@ -67,20 +52,36 @@
                 content: "";
             }
             .dropdown-content > .item {
-                padding: 12px 16px;
                 text-decoration: none;
+                display: block;
+                padding: 4px 10px 4px 15px;
+                overflow: hidden;
+                color: #24292e;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                box-sizing: border-box;
             }
             .dropdown-content .header {
                 display: flex;
                 flex-direction: column;
-                color: black;
+                color: #24292e;
+                padding: 8px 16px;
+                font-size: 0.84em;
+            }
+            .header strong {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                vertical-align: top;
+                font-weight: 600;
             }
             .dropdown-content .selectable {
-                color: black;
+                font-size: 0.78em;
             }
             .dropdown .selectable:hover {
-                background-color: #3498DB;
+                background-color: #0366d6;
                 color: #fff;
+                cursor: pointer;
             }
             .show {
                 display: block;
@@ -111,7 +112,7 @@
                 <div class="item selectable" on-tap="_userProfile">Your profile</div>
                 <div class="item selectable" on-tap="_lsHome">Your home directory</div>
                 <div class="dropdown-divider"></div>
-                <div class="item selectable" on-tap="_loginout">[[x]]</div>
+                <div class="item selectable" on-tap="_loginout">[[state]]</div>
             </div>
         </div>
     </template>
@@ -128,11 +129,11 @@
                 switch (sessionStorage.getItem("hasAuthClientCertificate")) {
                     case 'true':
                         const scheme = sessionStorage.getItem("authType");
-                        this.x = scheme === "Basic" || scheme === "Bearer" ?
+                        this.state = scheme === "Basic" || scheme === "Bearer" ?
                             'Log out of added credential' : 'Add another credential';
                         break;
                     default:
-                        this.x = 'Log out';
+                        this.state = 'Log out';
                 }
             }
             static get is()
@@ -150,7 +151,7 @@
                         type: String,
                         notify: true,
                     },
-                    x: {
+                    state: {
                         type: String,
                         notify: true,
                     }
@@ -193,7 +194,7 @@
             _loginout()
             {
                 this.$.dropdownPanel.classList.remove('show');
-                if (this.x.includes('Log out')) {
+                if (this.state.includes('Log out')) {
                     //logout
                     //TODO: think of showing a message that the user is being logged out
                     sessionStorage.clear();
