@@ -119,11 +119,12 @@
     <script>
         class UserProfileDropdown extends Polymer.Element
         {
-            constructor(name, email)
+            constructor(name, email, parentTagName)
             {
                 super();
                 if (name) this.username = name;
                 if (email) this.email = email;
+                if (parentTagName) this.parentTagName = parentTagName;
                 this._clickListener = this._dismissListener.bind(this);
 
                 switch (sessionStorage.getItem("hasAuthClientCertificate")) {
@@ -152,6 +153,10 @@
                         notify: true,
                     },
                     state: {
+                        type: String,
+                        notify: true,
+                    },
+                    parentTagName: {
                         type: String,
                         notify: true,
                     }
@@ -185,7 +190,7 @@
             }
             _dismissListener(ev)
             {
-                if (!(ev.target.tagName === "AUTH-SCHEME-TOGGLE")) {
+                if (!(ev.target.tagName === this.parentTagName)) {
                     if (this.$.dropdownPanel.classList.contains('show')) {
                         this.$.dropdownPanel.classList.remove('show');
                     }

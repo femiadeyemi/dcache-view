@@ -10,6 +10,7 @@ if (window.Worker && !sessionStorage.getItem("hasAuthClientCertificate")) {
     }, false);
 
     worker.addEventListener('error', function (e) {
+        console.warn(e);
         worker.terminate();
     }, false);
 }

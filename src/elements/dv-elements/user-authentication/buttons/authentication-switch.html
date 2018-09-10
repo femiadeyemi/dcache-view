@@ -2,7 +2,7 @@
 
 <link rel="import" href="login-button.html">
 <link rel="import" href="../../user-profile/user-profile-dropdown.html">
-<dom-module id="auth-scheme-toggle">
+<dom-module id="authentication-switch">
     <template>
         <style>
             .none {
@@ -12,7 +12,7 @@
         <div id="container"></div>
     </template>
     <script>
-        class AuthSchemeToggle extends Polymer.Element
+        class AuthenticationSwitch extends Polymer.Element
         {
             constructor()
             {
@@ -23,7 +23,7 @@
             }
             static get is()
             {
-                return 'auth-scheme-toggle';
+                return 'authentication-switch';
             }
             ready()
             {
@@ -81,7 +81,7 @@
                     this.$.container.appendChild(new LoginButton());
                 } else {
                     this.$.container.appendChild(new UserProfileDropdown(sessionStorage.getItem("name"),
-                        sessionStorage.getItem("email")));
+                        sessionStorage.getItem("email"), this.tagName));
                 }
             }
             _login()
@@ -103,6 +103,6 @@
                 this.currentPath = e.detail.currentPath;
             }
         }
-        window.customElements.define(AuthSchemeToggle.is, AuthSchemeToggle);
+        window.customElements.define(AuthenticationSwitch.is, AuthenticationSwitch);
     </script>
 </dom-module>
