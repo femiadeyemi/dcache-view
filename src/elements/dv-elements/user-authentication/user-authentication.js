@@ -27,36 +27,33 @@ class UserAuthentication extends Polymer.Element
                     "Suppress-WWW-Authenticate": "Suppress",
                     "Accept": "Application/json"
                 }
-            })
-                .then((response) => {
-                    if (response.status !== 200) {
-                        this._dispatchError(`${response.status}`);
+            }).then((response) => {
+                if (response.status !== 200) {
+                    this._dispatchError(`${response.status}`);
+                    return;
+                }
+                return response.json();
+            }).then((user) => {
+                if (user['status'] === "AUTHENTICATED") {
+                    if (sessionStorage.getItem("hasAuthClientCertificate") &&
+                        user.name !== sessionStorage.getItem("username")) {
+                        this._dispatchError('Unacceptable request! The username you provided must ' +
+                            'correspond to your certificate username.');
                         return;
                     }
-                    return response.json();
-                })
-                .then((user) => {
-                    if (user['status'] === "AUTHENTICATED") {
-                        if (sessionStorage.getItem("hasAuthClientCertificate") &&
-                            user.name !== sessionStorage.getItem("username")) {
-                            this._dispatchError('Unacceptable request! The username you provided must ' +
-                                'correspond to your certificate username.');
-                            return;
-                        }
-                        user["upauth"] = this.auth;
-                        user["authType"] = authScheme;
-                        this.dispatchEvent(new CustomEvent('dv-user-authentication-successful', {
-                            detail: {message: 'Login successful!', credential: user}, bubbles: true, composed: true
-                        }));
-                    } else {
-                        this._dispatchError('Login failed. Please check that you have supplied ' +
-                            'the correct credentials.');
-                    }
-                })
-                .catch((err) => {
-                    const msg = `${err.message}. Please check that you have supplied the correct credentials.`;
-                    this._dispatchError(msg);
-                });
+                    user["upauth"] = this.auth;
+                    user["authType"] = authScheme;
+                    this.dispatchEvent(new CustomEvent('dv-user-authentication-successful', {
+                        detail: {message: 'Login successful!', credential: user}, bubbles: true, composed: true
+                    }));
+                } else {
+                    this._dispatchError('Login failed. Please check that you have supplied ' +
+                        'the correct credentials.');
+                }
+            }).catch((err) => {
+                const msg = `${err.message}. Please check that you have supplied the correct credentials.`;
+                this._dispatchError(msg);
+            });
         } else {
             this._dispatchError("Authorization header is not properly set.");
         }
