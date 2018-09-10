@@ -6,8 +6,12 @@
             :host {
                 margin: auto;
             }
+            .none {
+                display: none;
+            }
         </style>
-        <video id="video" controls></video>
+        <video id="video" class="none"
+               width="[[_width]]" height="[[_height]]" controls></video>
     </template>
     <script src="video-viewer.js"></script>
 </dom-module>
