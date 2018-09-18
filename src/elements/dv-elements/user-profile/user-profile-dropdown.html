@@ -97,6 +97,10 @@
             iron-icon {
                 width: 15px;
             }
+            small {
+                white-space: initial;
+                font-size: 0.7em;
+            }
         </style>
         <div class="dropdown">
             <div on-tap="_open" class="dropbtn">
@@ -107,6 +111,7 @@
                 <div class="item header">
                     <span>Logged in as</span>
                     <strong>[[username]]</strong>
+                    <small>Using [[scheme]]</small>
                 </div>
                 <div class="dropdown-divider"></div>
                 <div class="item selectable" on-tap="_userProfile">Your profile</div>
@@ -132,8 +137,12 @@
                         const scheme = sessionStorage.getItem("authType");
                         this.state = scheme === "Basic" || scheme === "Bearer" ?
                             'Log out of added credential' : 'Add another credential';
+                        this.scheme = scheme === "Basic" || scheme === "Bearer" ?
+                            `client certificate with ${sessionStorage.getItem("authType")} authentication scheme` :
+                            'client certificate for authentication';
                         break;
                     default:
+                        this.scheme = `${sessionStorage.getItem("authType")} authentication scheme`;
                         this.state = 'Log out';
                 }
             }
@@ -159,6 +168,10 @@
                     parentTagName: {
                         type: String,
                         notify: true,
+                    },
+                    scheme: {
+                        type: String,
+                        notify: true
                     }
                 }
             }
