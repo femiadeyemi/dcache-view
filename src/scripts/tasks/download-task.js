@@ -1,18 +1,25 @@
 self.addEventListener('message', function(e) {
 
+    const headers = new Headers({
+        "Suppress-WWW-Authenticate": "Suppress",
+        "Content-Type": e.data.mime
+    });
+    if (!e.data.usesCert) {
+        headers.append("Authorization", `${e.data.upauth}`);
+    }
     const request = new Request(e.data.url, {
-        method: 'GET',
-        headers: e.data.headers,
-        mode: 'cors'
+        headers: headers
     });
 
     fetch(request).then((file) => {
-        if (e.data.return === 'json') {
-            return file.json();
-        } else if (e.data.return === 'blob') {
-            return file.blob();
+        switch (e.data.return) {
+            case 'json':
+                return file.json();
+            case 'blob':
+                return file.blob();
+            default:
+                return file.arrayBuffer();
         }
-        return file.arrayBuffer();
     }).then((data)=>{
         if (e.data.return === 'json') {
             self.postMessage(data);
