@@ -44,5 +44,11 @@ class VideoViewer extends Polymer.Element
     {
         this.$.video.pause();
     }
+    _download()
+    {
+        this.dispatchEvent(
+            new CustomEvent('dv-namespace-files-viewer-download', {bubbles: true, composed: true})
+        );
+    }
 }
 window.customElements.define(VideoViewer.is, VideoViewer);
