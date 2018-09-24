@@ -154,7 +154,6 @@
                 const userAuth = new UserAuthentication(accessToken);
 
                 userAuth.addEventListener('dv-user-authentication-successful', (e)=>{
-
                     const user = e.detail.credential;
                     user['authType'] = 'Bearer';
                     user['upauth'] = accessToken;
