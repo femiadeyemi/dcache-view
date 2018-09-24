@@ -1,6 +1,6 @@
 <link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
-
+<link rel="import" href="../mixin/files-viewer-mixin.html">
 <dom-module id="video-viewer">
     <template>
         <style>
@@ -24,11 +24,7 @@
             }
         </style>
         <div class="video-container">
-            <video id="video" controls>
-                Sorry, your browser doesn't support embedded videos,
-                but don't worry, you can <paper-button on-tap="_download">download it</paper-button>
-                and watch it with your favorite video player!
-            </video>
+            <video id="video" on-error="_error" controls></video>
         </div>
     </template>
     <script src="video-viewer.js"></script>

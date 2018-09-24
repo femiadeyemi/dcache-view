@@ -1,4 +1,4 @@
-class ImageViewer extends Polymer.Element
+class ImageViewer extends DcacheViewMixins.FilesViewerMixin(Polymer.Element)
 {
     constructor(src)
     {
@@ -16,10 +16,6 @@ class ImageViewer extends Polymer.Element
     static get properties()
     {
         return {
-            src: {
-                type: String,
-                notify: true
-            },
             _width: {
                 type: Number,
                 notify: true,
@@ -35,15 +31,10 @@ class ImageViewer extends Polymer.Element
             }
         }
     }
-    static get observers()
-    {
-        return ['_loadImage(src)'];
-    }
     connectedCallback()
     {
         super.connectedCallback();
         this.$.img.addEventListener('load', this._getImageDimension.bind(this));
-        //TODO: add the error event
 
         window.addEventListener('dv-namespace-files-viewer-zoom-in', this._zoomInListener);
         window.addEventListener('dv-namespace-files-viewer-zoom-out', this._zoomOutListener);
@@ -58,7 +49,7 @@ class ImageViewer extends Polymer.Element
         window.removeEventListener('dv-namespace-files-viewer-rotate-left', this._rotateLeftListener);
         window.removeEventListener('dv-namespace-files-viewer-rotate-right', this._rotateRightListener);
     }
-    _loadImage(src)
+    _load(src)
     {
         this.$.img.src = src;
     }
@@ -80,9 +71,7 @@ class ImageViewer extends Polymer.Element
             this._height = imgHeight;
         }
         this.$.img.classList.remove('none');
-        this.dispatchEvent(
-            new CustomEvent('dv-namespace-files-viewer-finished-loading', {bubbles:true, composed:true})
-        );
+        this._done();
     }
     _zoomIn()
     {

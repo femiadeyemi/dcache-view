@@ -1,4 +1,4 @@
-class VideoViewer extends Polymer.Element
+class VideoViewer extends DcacheViewMixins.FilesViewerMixin(Polymer.Element)
 {
     constructor(src)
     {
@@ -10,15 +10,6 @@ class VideoViewer extends Polymer.Element
     {
         return 'video-viewer';
     }
-    static get properties()
-    {
-        return {
-            src: {
-                type: String,
-                notify: true
-            }
-        }
-    }
     connectedCallback()
     {
         super.connectedCallback();
@@ -29,26 +20,21 @@ class VideoViewer extends Polymer.Element
         super.disconnectedCallback();
         window.removeEventListener('dv-namespace-close-files-viewer-appliance', this._stopListener);
     }
-    static get observers()
-    {
-        return ['_load(src)'];
-    }
     _load(src)
     {
         this.$.video.src = src;
-        this.dispatchEvent(
-            new CustomEvent('dv-namespace-files-viewer-finished-loading', {bubbles:true, composed:true}));
+        this._done();
         this.$.video.play();
     }
     _stop()
     {
         this.$.video.pause();
     }
-    _download()
-    {
-        this.dispatchEvent(
-            new CustomEvent('dv-namespace-files-viewer-download', {bubbles: true, composed: true})
-        );
-    }
+    /*_error(err) {
+        throw new Error ("Sorry, your browser doesn't support embedded videos, " +
+            "but don't worry, you can download it and watch it with your favorite " +
+            "video player!")
+    }*/
+
 }
 window.customElements.define(VideoViewer.is, VideoViewer);

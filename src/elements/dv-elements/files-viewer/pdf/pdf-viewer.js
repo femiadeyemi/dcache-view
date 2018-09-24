@@ -1,4 +1,4 @@
-class PdfViewer extends Polymer.Element
+class PdfViewer extends DcacheViewMixins.FilesViewerMixin(Polymer.Element)
 {
     constructor(src)
     {
@@ -59,10 +59,6 @@ class PdfViewer extends Polymer.Element
     static get properties()
     {
         return {
-            src: {
-                type: String,
-                notify: true
-            },
             pdfjsLib: {
                 type: Object,
                 notify: true
@@ -96,22 +92,21 @@ class PdfViewer extends Polymer.Element
     static get observers()
     {
         return [
-            '_load(src)',
             '_observePageChange(pageNum)',
             '_refresh(scale)',
             '_refresh(rotate)'
         ];
     }
-    _load(src)
+    _load()
     {
-        this.dispatchEvent(
-            new CustomEvent('dv-namespace-files-viewer-finished-loading', {bubbles:true, composed:true}));
+        this._done()
     }
     _observePageChange(pageNum)
     {
         this.dispatchEvent(
-            new CustomEvent('dv-namespace-files-viewer-nav-page-change', {detail:{page: pageNum}, bubbles:true,
-                composed:true}));
+            new CustomEvent('dv-namespace-files-viewer-nav-page-change',
+                {detail: {page: pageNum}, bubbles:true, composed:true})
+        );
     }
     _renderPage(num)
     {

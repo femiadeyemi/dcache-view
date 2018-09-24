@@ -1,5 +1,5 @@
 <link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
-
+<link rel="import" href="../mixin/files-viewer-mixin.html">
 <dom-module id="image-viewer">
     <template>
         <style>
@@ -13,7 +13,7 @@
                 transform: rotate(0deg);
             }
         </style>
-        <img id="img" class="none" width$="[[_width]]" height$="[[_height]]">
+        <img id="img" class="none" on-error="_error" width$="[[_width]]" height$="[[_height]]">
     </template>
     <script src="image-viewer.js"></script>
 </dom-module>

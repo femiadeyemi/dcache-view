@@ -192,7 +192,12 @@
                             this.$.open.addEventListener('tap', this._openOrDownload.bind(this));
                             break;
                         case "REGULAR":
-                            this.openOrView = 'View';
+                            if (this.targetNode.fileMetaData.fileMimeType.includes('video') ||
+                                this.targetNode.fileMetaData.fileMimeType.includes('audio')) {
+                                this.openOrView = 'Play';
+                            } else {
+                                this.openOrView = 'View';
+                            }
                             this.$.download.addEventListener('tap', this._openOrDownload.bind(this));
                             this.$.open.addEventListener('tap', this._view.bind(this));
                             break;

@@ -3,24 +3,15 @@
 <dom-module id="additional-tools">
     <template>
         <style>
-            :host {
-
-            }
             #wrapper {
-                /*background: #bf8484;*/
-                /*padding: 5px;*/
-                /*border-radius: 4px;*/
-                background: #f2f2f2;
-                padding: 5px;
-                border-radius: 5px;
+                background: rgba(0, 0, 0, 0.4);
+                padding: 15px 5px;
+                border-radius: 10px;
+                border: 1px solid #616161;
             }
             paper-fab {
                 --paper-fab-keyboard-focus-background: rgb(189,189,189);
-                color: #616161;
-                box-shadow: 5px 0 rgba(0, 0, 0, 0.14),
-                    0 1px 10px 0 rgba(0, 0, 0, 0.12),
-                    0 2px 4px -1px rgba(0, 0, 0, 0.4);
-                background-color: rgb(242, 242, 242);
+                background-color: #323232;
                 width: 36px;
                 height: 36px;
             }
@@ -55,20 +46,6 @@
                         notify: true
                     }
                 }
-            }
-            static get observers()
-            {
-                return ['_load(mime)'];
-            }
-            _load(mime)
-            {
-
-            }
-            _download()
-            {
-                this.dispatchEvent(
-                    new CustomEvent('dv-namespace-files-viewer-download', {bubbles: true, composed: true})
-                );
             }
             _zoomIn()
             {
