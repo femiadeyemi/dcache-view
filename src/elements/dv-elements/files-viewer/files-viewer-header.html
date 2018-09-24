@@ -1,6 +1,6 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="mixin/files-viewer-mixin.html">
-<dom-module id="files-viewer-toolbar">
+<dom-module id="files-viewer-header">
     <template>
         <style>
             :host {
@@ -132,7 +132,7 @@
         </div>
     </template>
     <script>
-        class FilesViewerToolbar extends DcacheViewMixins.FilesViewerMixin(Polymer.Element)
+        class FilesViewerHeader extends DcacheViewMixins.FilesViewerMixin(Polymer.Element)
         {
             constructor()
             {
@@ -155,7 +155,7 @@
             }
             static get is()
             {
-                return 'files-viewer-toolbar';
+                return 'files-viewer-header';
             }
             static get properties()
             {
@@ -238,6 +238,6 @@
                 }
             }
         }
-        window.customElements.define(FilesViewerToolbar.is, FilesViewerToolbar);
+        window.customElements.define(FilesViewerHeader.is, FilesViewerHeader);
     </script>
 </dom-module>

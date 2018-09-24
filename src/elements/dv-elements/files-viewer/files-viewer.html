@@ -3,7 +3,7 @@
 <link rel="import" href="../../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 
-<link rel="import" href="files-viewer-toolbar.html">
+<link rel="import" href="files-viewer-header.html">
 <link rel="import" href="pdf/pdf-viewer.html">
 <link rel="import" href="json/json-viewer.html">
 <link rel="import" href="additional-tools.html">
@@ -55,17 +55,15 @@
         <app-header-layout has-scrolling-region>
             <app-header slot="header" fixed>
                 <app-toolbar>
-                    <files-viewer-toolbar
+                    <files-viewer-header
                             id="header" file-name="[[file.fileMetaData.fileName]]"
-                            file-mime-type="[[file.fileMetaData.fileMimeType]]"></files-viewer-toolbar>
+                            file-mime-type="[[file.fileMetaData.fileMimeType]]"></files-viewer-header>
                 </app-toolbar>
             </app-header>
             <div id="main-content">
                 <div id="viewer"></div>
                 <paper-spinner active="[[loading]]"></paper-spinner>
-                <additional-tools
-                        id="additional-tools" class="none"
-                        mime="[[file.fileMetaData.fileMimeType]]"></additional-tools>
+                <additional-tools id="additional-tools" class="none"></additional-tools>
                 <files-viewer-error id="error" class="none"
                                     src="[[src]]" name="[[file.fileMetaData.fileName]]"></files-viewer-error>
             </div>
@@ -190,7 +188,7 @@
                                 content = new ImageViewer(this.src);
                                 break;
                             default:
-                                this.error();
+                                this._error();
                         }
                         content.addEventListener('dv-namespace-files-viewer-finished-loading', ()=>{
                             this.loading = false;
@@ -200,7 +198,7 @@
 
                     this.$.viewer.append(content);
                 }).catch((e) => {
-                    this.error();
+                    this._error();
                 });
             }
             _cleanUp(e)

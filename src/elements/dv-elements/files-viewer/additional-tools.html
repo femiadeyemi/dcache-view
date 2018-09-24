@@ -1,5 +1,5 @@
 <link rel="import" href="../../../bower_components/polymer/polymer-element.html">
-
+<link rel="import" href="mixin/files-viewer-mixin.html">
 <dom-module id="additional-tools">
     <template>
         <style>
@@ -28,7 +28,7 @@
         </div>
     </template>
     <script>
-        class AdditionalTools extends Polymer.Element
+        class AdditionalTools extends DcacheViewMixins.FilesViewerMixin(Polymer.Element)
         {
             constructor()
             {
@@ -37,15 +37,6 @@
             static get is()
             {
                 return 'additional-tools';
-            }
-            static get properties()
-            {
-                return {
-                    mime: {
-                        type: String,
-                        notify: true
-                    }
-                }
             }
             _zoomIn()
             {
