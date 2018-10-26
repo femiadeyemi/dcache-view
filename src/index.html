@@ -254,6 +254,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                             <paper-fab icon="supervisor-account" title="admin" class="green" mini></paper-fab>
                                         </a>
                                     </paper-item>
+                                        <a data-route="shared-file" href$="{{baseUrl}}shared-file">
+                                            <paper-fab icon="folder-shared"
+                                                       title="shared files" class="orange" mini></paper-fab>
+                                        </a>
+                                    </paper-item>
+
+                                    <template is="dom-if" if="[[config.isAdmin]]">
+                                        <paper-item>
+                                            <a data-route="admin" href$="{{baseUrl}}admin"><!--dashboard-->
+                                                <paper-fab icon="supervisor-account" title="admin" class="green" mini></paper-fab>
+                                            </a>
+                                        </paper-item>
+                                    </template>
 
                                     <template is="dom-if" if="[[config.isSomebody]]">
                                         <paper-item>
@@ -294,6 +307,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                                         <view-file id="homeDir"></view-file>
                                                     </div>
                                                 </paper-header-panel>
+                                            </section>
+
+                                            <section data-route="shared-file"
+                                                     class="fit" style="background-color:#ececec;">
+                                                <file-sharing-page on-click="click"></file-sharing-page>
                                             </section>
 
                                             <section data-route="admin" class="fit"

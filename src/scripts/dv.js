@@ -95,7 +95,42 @@
             node.removeChild(node.firstChild);
         }
     };
-
+    app.buildAndOpenContextMenu = function(event, contextContent, height)
+    {
+        app.$.centralSubContextMenu.close();
+        app.$.centralContextMenu.close();
+        app.removeAllChildren(app.$.centralContextMenu);
+        let x = 0, y = 0;
+        const w = 200;
+        if (event.pageX || event.pageY) {
+            x = event.pageX;
+            y = event.pageY;
+        } else if (event.clientX || event.clientY) {
+            x = event.clientX + document.body.scrollLeft +
+                document.documentElement.scrollLeft;
+            y = event.clientY + document.body.scrollTop +
+                document.documentElement.scrollTop;
+        }
+        const vx = window.innerWidth;
+        const vy = window.innerHeight;
+        if (vx - x < w && vy - y >= height) {
+            app.x = x-w;
+            app.y = y;
+        } else if (vx - x < w && vy - y < height) {
+            app.x = x-w;
+            app.y = y-height;
+        } else if (vx - x >= w && vy - y < height) {
+            app.x = x;
+            app.y = y-height;
+        } else {
+            app.x = x;
+            app.y = y;
+        }
+        app.notifyPath('x');
+        app.notifyPath('y');
+        app.$.centralContextMenu.appendChild(contextContent);
+        app.$.centralContextMenu.open();
+    };
     app.currentDirContext = function(e)
     {
         /**
@@ -107,13 +142,9 @@
          * a. https://caniuse.com/#search=Shadow%20DOM
          * b. https://caniuse.com/#search=Custom%20Elements
          */
-        app.$.centralSubContextMenu.close();
-        const contextMenu = app.$.centralContextMenu;
-        contextMenu.close();
-        app.removeAllChildren(contextMenu);
 
         const vf = app.$.homedir.querySelector('view-file');
-        let x = 0, y = 0, h = 110, cc;
+        let h = 110, cc;
         if (e.screenX === 0 & e.screenY === 0) {
             const arr = e.path || (e.composedPath && e.composedPath());
             const lr = arr.find(function (el) {
@@ -129,36 +160,7 @@
         } else {
             cc = new NamespaceContextualContent(vf.currentDirMetaData, 2);
         }
-
-        const w = 200;
-        if (e.pageX || e.pageY) {
-            x = e.pageX;
-            y = e.pageY;
-        } else if (e.clientX || e.clientY) {
-            x = e.clientX + document.body.scrollLeft +
-                document.documentElement.scrollLeft;
-            y = e.clientY + document.body.scrollTop +
-                document.documentElement.scrollTop;
-        }
-        const vx = window.innerWidth;
-        const vy = window.innerHeight;
-        if (vx - x < w && vy - y >= h) {
-            app.x = x-w;
-            app.y = y;
-        } else if (vx - x < w && vy - y < h) {
-            app.x = x-w;
-            app.y = y-h;
-        } else if (vx - x >= w && vy - y < h) {
-            app.x = x;
-            app.y = y-h;
-        } else {
-            app.x = x;
-            app.y = y;
-        }
-        app.notifyPath('x');
-        app.notifyPath('y');
-        contextMenu.appendChild(cc);
-        contextMenu.open();
+        app.buildAndOpenContextMenu(e, cc, h)
     };
 
     app.subContextMenu = function(e)

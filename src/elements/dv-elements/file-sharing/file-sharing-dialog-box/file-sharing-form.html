@@ -1,17 +1,16 @@
-<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
-<link rel="import" href="../../../bower_components/paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../../../bower_components/paper-spinner/paper-spinner.html">
-<link rel="import" href="../../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../../../bower_components/paper-styles/paper-styles.html">
 
-<script src="dv-file-shareable-link.js"></script>
-<script src="../../../bower_components/qr.js/qr.js"></script>
+<script src="../../../../bower_components/qr.js/qr.js"></script>
 <dom-module id="file-sharing-form">
     <template>
         <style is="custom-style" include="paper-material-styles">
@@ -30,8 +29,13 @@
                 margin:0 10px;
             }
             #linkWrapper {
+                height: 50%;
+            }
+            #macaroonWrapper {
+                height: 15%;
+            }
+            .txt {
                 width: 93%;
-                height: 95%;
                 word-wrap: break-word;
                 text-align: justify;
                 text-justify: inter-word;
@@ -44,7 +48,8 @@
             }
             .loading[is-loading] {
                 position: absolute;
-                height: 100%;
+                height: calc(100% - 65px);
+                top: 55px;
                 left: 0;
                 right: 0;
                 bottom: 0;
@@ -112,7 +117,7 @@
                 margin: 5px;
             }
             .activities {
-                margin-top: 5px;
+                margin-top: 10px;
             }
             .description > label {
                 font-size: 0.9em;
@@ -235,7 +240,14 @@
             </div>
             <div class="show link-result">
                 <div class="textarea-container">
-                    <textarea id="linkWrapper" readonly title="">[[generatedLink]]</textarea>
+                    <div>
+                        <span>Link:</span>
+                    </div>
+                    <textarea id="linkWrapper" class="txt" readonly title="">[[generatedLink]]</textarea>
+                    <div>
+                        <span>Macaroon:</span>
+                    </div>
+                    <textarea id="macaroonWrapper" class="txt" readonly title="">[[macaroon]]</textarea>
                 </div>
                 <div class="image-container paper-material" elevation="1">
 
@@ -245,6 +257,9 @@
             <br>
             <div class="buttons">
                 <paper-button class="btn" dialog-dismiss raised>Done</paper-button>
+                <paper-button on-tap="_copyMacaroon" raised>
+                    Copy macaroon
+                </paper-button>
                 <paper-button on-tap="_copyLink" raised>
                     <iron-icon icon="link"></iron-icon>
                     Copy link
@@ -256,6 +271,7 @@
         </div>
         <div class="loading" is-loading$="[[loading]]">
             <paper-spinner alt="waiting for response" active="{{loading}}"></paper-spinner>
+            <span>processing your request ...</span>
         </div>
     </template>
     <script>
@@ -286,6 +302,10 @@
                         type: String,
                         notify: true
                     },
+                    macaroon: {
+                        type: String,
+                        notify: true
+                    },
                     src: {
                         type: String,
                         notify: true
@@ -294,10 +314,10 @@
                         type: Array,
                         value: function () {
                             return [
-                                {name: 'Download', description: '', checked: false},
-                                {name: 'Upload', description: '', checked: false},
-                                {name: 'Delete', description: '', checked: false},
-                                {name: 'List', description: '', checked: false},
+                                {name: 'Download', description: '', checked: true},
+                                {name: 'Upload', description: '', checked: true},
+                                {name: 'Delete', description: '', checked: true},
+                                {name: 'List', description: '', checked: true},
                             ];
                         },
                         notify: true
@@ -321,42 +341,50 @@
             connectedCallback()
             {
                 super.connectedCallback();
-                window.addEventListener('dv-namespace-file-shareable-link-generated',
-                    this._createLinkAndQRCode.bind(this));
             }
             disconnectedCallback()
             {
                 super.disconnectedCallback();
-                window.removeEventListener('dv-namespace-file-shareable-link-generated',
-                    this._createLinkAndQRCode.bind(this));
             }
             _getLink()
             {
-                const v = this.$.validity.value;
-                const ac = [];
+                const v = this.$.validity.selectedItem.getAttribute("value");
+                const activitiesList = [];
                 for (let i=0; i<4; i++) {
-                    if (this.activities[i].checked) {
-                        ac.push(this.activities[i].name.toUpperCase());
-                    }
+                    if (this.activities[i].checked) activitiesList.push(this.activities[i].name.toUpperCase());
                 }
                 this.loading = true;
-                const link = new ShareableLink({
-                    fullPath: this.fullPath,
-                    validity: v,
-                    restriction: ac.join()
-                });
-                try {
-                    link.generate();
-                } catch (e) {
+                const shareableLinkWorker = new Worker('./scripts/tasks/macaroon-request-task.js');
+                shareableLinkWorker.addEventListener('message', (e) => {
+                    const message = e.data;
+                    shareableLinkWorker.terminate();
+                    this.macaroon = message.macaroon;
+                    console.log(message);
+                    this._createLinkAndQRCode()
+                }, false);
+                shareableLinkWorker.addEventListener('error', (e) => {
+                    //FIXME -  incomplete code
+                    shareableLinkWorker.terminate();
                     this.isFormSwitchON = true;
                     window.dispatchEvent(new CustomEvent('dv-namespace-show-message-toast', {
                         detail: {message: "Sharing failed: There was a problem with your operation. " +
-                            "Please contact your admin."}, bubbles: true, composed: true}));
-                }
+                                "Please contact your admin."}, bubbles: true, composed: true}));
+                }, false);
+                shareableLinkWorker.postMessage({
+                    "url": `${window.CONFIG["dcache-view.endpoints.webdav"].slice(0, -1)}${this.fullPath}`,
+                    "body": {
+                        "caveats": activitiesList.length > 0 ?
+                            [`path:${this.fullPath}`, `activity: ${activitiesList.join()}`] : [`path:${this.fullPath}`],
+                        "validity":`${this.$.validity.selectedItem.getAttribute("value")}`
+                    },
+                    "usesCert": !!sessionStorage.getItem("hasAuthClientCertificate"),
+                    'upauth' : sessionStorage.getItem('upauth'),
+                })
             }
-            _createLinkAndQRCode(e)
+            _createLinkAndQRCode()
             {
-                this.generatedLink = e.detail.link;
+                this.generatedLink =
+                    `${window.location.href}#!/share-link?filePath=${encodeURIComponent(this.fullPath)}&authz=${this.macaroon}`;
                 this.src = QRCode.generatePNG(this.generatedLink, {
                     modulesize: 5,
                     margin: 4,
@@ -368,21 +396,30 @@
                 this.$.linkWrapper.focus();
                 this.$.linkWrapper.setSelectionRange(0,this.$.linkWrapper.value.length);
             }
-            _copyLink()
+            _copy(id)
             {
-                const copiedLink = this.$.linkWrapper;
+                const copiedLink = this.$[id];
                 copiedLink.select();
                 try {
                     const successful = document.execCommand('copy');
                     const msg = successful ? 'successful' : 'unsuccessful';
+                    const linkOrMacaroon = id === "linkWrapper"? 'Link' : 'Macaroon';
                     window.dispatchEvent(new CustomEvent('dv-namespace-show-message-toast',
-                        {detail: {message: `Link copied ${msg}`}}
+                        {detail: {message: `${linkOrMacaroon} copied ${msg}`}}
                     ));
                 } catch (err) {
                     window.dispatchEvent(new CustomEvent('dv-namespace-show-message-toast',
                         {detail: {message: `Oops, unable to copy. ${err.message}`}}
                     ));
                 }
+            }
+            _copyLink()
+            {
+                this._copy("linkWrapper");
+            }
+            _copyMacaroon()
+            {
+                this._copy("macaroonWrapper");
             }
             _downloadQR()
             {

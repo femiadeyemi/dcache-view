@@ -131,6 +131,37 @@
             <div class="stamp">dCache.org</div>
         </div>
         <div class$="[[_computedRowClass(isUserLogin)]]"></div>
+        <div class="row" class$="[[_computedRowClass(isSharedPage)]]">
+            <div class="stamp">dCache.org</div>
+            <div class="flex3 pagination">
+                <div id="shared-pagination">
+                    <paper-button>Shared with me</paper-button>
+                </div>
+            </div>
+            <div class="standardTools flex">
+                <div class$="[[_computedClass(isSelected)]]">
+                    <paper-icon-button class="move"
+                                       icon="move-icons:movefolder"
+                                       on-tap="_move"></paper-icon-button>
+                    <paper-tooltip>move the selected file to another directory</paper-tooltip>
+                </div>
+                <div>
+                    <paper-icon-button class="create"
+                                       icon="create-new-folder"
+                                       on-tap="_create"></paper-icon-button>
+                    <paper-tooltip>create new folder</paper-tooltip>
+                </div>
+                <div>
+                    <upload-files-button></upload-files-button>
+                </div>
+                <div>
+                    <paper-icon-button class="info"
+                                       icon="icons:info"
+                                       on-tap="_metadataInfo"></paper-icon-button>
+                    <paper-tooltip>metadata information</paper-tooltip>
+                </div>
+            </div>
+        </div>
     </template>
     <script>
         class SelectedTitle extends Polymer.Element
@@ -201,6 +232,10 @@
                         value: false,
                         notify: true
                     },
+                    isSharedPage: {
+                        type: Boolean,
+                        notify: true
+                    },
 
                     _selectedItems: {
                         type: Array,
@@ -227,18 +262,27 @@
                     case "home":
                         this.isUserLogin = false;
                         this.isAdmin = false;
+                        this.isSharedPage = false;
                         this.isNamespace = true;
                         break;
                     case "admin":
                     case "user-profile":
                         this.isUserLogin = false;
                         this.isNamespace = false;
+                        this.isSharedPage = false;
                         this.isAdmin = true;
                         break;
                     case "user-login":
                         this.isNamespace = false;
                         this.isAdmin = false;
+                        this.isSharedPage = false;
                         this.isUserLogin = true;
+                        break;
+                    case "shared-file":
+                        this.isUserLogin = false;
+                        this.isAdmin = false;
+                        this.isNamespace = false;
+                        this.isSharedPage = true;
                         break;
                 }
             }

@@ -1,0 +1,29 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer-element.html">
+<<link rel="import" href="../../dcache-view-table/dcache-view-table.html">
+<dom-module id="shared-directory-view">
+    <template>
+        <style>
+            :host {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                box-sizing: border-box;
+            }
+        </style>
+        <dcache-view-table path="{{path}}"></dcache-view-table>
+    </template>
+    <script>
+        class SharedDirectoryView extends Polymer.Element
+        {
+            static get is()
+            {
+                return 'shared-directory-view';
+            }
+            constructor()
+            {
+                super();
+            }
+        }
+        window.customElements.define(SharedDirectoryView.is, SharedDirectoryView);
+    </script>
+</dom-module>

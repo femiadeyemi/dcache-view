@@ -5,7 +5,7 @@
 
 <link rel="import" href="../files-viewer/files-viewer.html">
 <link rel="import" href="../qbi-dialog-content/qbi-dialog-content.html">
-<link rel="import" href="../file-sharing/file-sharing-form.html">
+<link rel="import" href="../file-sharing/file-sharing-dialog-box/file-sharing-form.html">
 <dom-module id="namespace-contextual-content">
     <template>
         <style>
@@ -301,21 +301,17 @@
 
             _share()
             {
-                app.$.centralContextMenu.close();
-                if (sessionStorage.upauth === null || sessionStorage.upauth === undefined) {
-                    window.dispatchEvent(new CustomEvent('dv-namespace-show-message-toast',
-                        {detail: {message: `You need to login to be able to share files.`}}
-                    ));
-                    return;
-                }
+                this.dispatchEvent(new CustomEvent('dv-namespace-close-centralcontextmenu', {
+                    bubbles: true, composed: true
+                }));
                 const fileSharingForm = new FileSharingForm(this.targetNode.fileMetaData.fileName,
                     this.currentPath.endsWith('/') ?
                     `${this.currentPath}${this.targetNode.fileMetaData.fileName}`:
                     `${this.currentPath}/${this.targetNode.fileMetaData.fileName}`);
                 this.dispatchEvent(
-                    new CustomEvent('dv-namespace-namespace-open-central-dialogbox', {
-                        detail: {node: fileSharingForm},
-                        bubbles: true, composed: true}));
+                    new CustomEvent('dv-namespace-open-central-dialogbox', {
+                        detail: {node: fileSharingForm}, bubbles: true, composed: true})
+                );
             }
 
             _metadata()
@@ -560,7 +556,7 @@
                 if (singleSelection && t.fileMetaData.fileType === 'DIR' && (id === 'download' || id === 'changeQos')) {
                     this.$[id].setAttribute('disabled', "");
                 }
-                if (!window.CONFIG.isSomebody && (id === 'changeQos' || id === 'share')) {
+                if (!window.CONFIG.isSomebody && id === 'changeQos') {
                     this.$[id].setAttribute('disabled', "");
                 }
             }

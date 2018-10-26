@@ -1,0 +1,66 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="page/shared-file-list.html">
+<link rel="import" href="page/shared-directory-view.html">
+<link rel="import" href="context-menu/file-sharing-contextual-content.html">
+<dom-module id="file-sharing-page">
+    <template>
+        <style>
+            :host {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                box-sizing: border-box;
+            }
+            .normal {
+
+            }
+            .none {
+                display: none;
+            }
+        </style>
+        <shared-file-list id="shared-file-list" class="normal"
+                          on-contextmenu="_openContextMenu"></shared-file-list>
+        <shared-directory-view id="shared-directory-view" class="none"></shared-directory-view>
+    </template>
+    <script>
+        class FileSharingPage extends Polymer.Element
+        {
+            static get is()
+            {
+                return 'file-sharing-page';
+            }
+            constructor()
+            {
+                super();
+            }
+            connectedCallback()
+            {
+                super.connectedCallback();
+            }
+            disconnectedCallback()
+            {
+                super.disconnectedCallback();
+            }
+            _openSharedDirectory()
+            {
+                this.$['shared-file-list'].classList.replace('normal', 'none');
+                this.$['shared-directory-view'].classList.replace('none', 'normal');
+            }
+            _openContextMenu(e)
+            {
+                if (e.screenX === 0 && e.screenY === 0) {
+                    /*const arr = e.path || (e.composedPath && e.composedPath());
+                    const lr = arr.find(function (el) {
+                        return el.tagName === "SHARED-FILE-LIST";
+                    });*/
+                    // console.log(this.$['shared-file-list'].selectionMonitoring[0])
+                    const cc = new FileSharingContextualContent(this.$['shared-file-list'].selectionMonitoring[0]);
+
+                    app.buildAndOpenContextMenu(e, cc, 245);
+                }
+            }
+        }
+        window.customElements.define(FileSharingPage.is, FileSharingPage);
+    </script>
+</dom-module>

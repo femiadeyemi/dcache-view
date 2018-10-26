@@ -71,6 +71,15 @@ gulp.task('copy-pdfjs', function() {
         .pipe(gulp.dest('./target/bower_components/pdfjs-dist/build'));
 });
 
+gulp.task('copy-macaroonjs', function() {
+    return gulp.src([
+        './src/bower_components/macaroons.js/**/*'
+    ], {
+        base: ''
+    })
+        .pipe(gulp.dest('./target/bower_components/macaroons.js'));
+});
+
 gulp.task('vulcanize', function() {
     return gulp.src('src/elements/elements.html')
         .pipe(vulcanize({
@@ -82,7 +91,7 @@ gulp.task('vulcanize', function() {
         .pipe(gulp.dest('./target/elements'));
 });
 
-gulp.task('build', ['copy-favicons', 'copy-index', 'copy-robots', 'copy-css', 'copy-scripts', 'copy-pdfjs']);
+gulp.task('build', ['copy-favicons', 'copy-index', 'copy-robots', 'copy-css', 'copy-scripts', 'copy-pdfjs', 'copy-macaroonjs']);
 
 gulp.task('default', ['bower', 'build'], function () {
     gulp.start('vulcanize','copy-webcomponents');
