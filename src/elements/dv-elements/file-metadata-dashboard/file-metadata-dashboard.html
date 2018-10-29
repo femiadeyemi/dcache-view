@@ -179,9 +179,9 @@
         </app-header-layout>
     </template>
     <script>
-        class FileMetadataDashboard extends Polymer.Element
+        class FileMetadataDashboard extends DcacheViewMixins.Commons(Polymer.Element)
         {
-            constructor(file, path, idx)
+            constructor(file, path, idx, auth)
             {
                 super();
                 this._setIndexListener_ = this._setIndexListener.bind(this);
@@ -193,6 +193,9 @@
                 this.path = path === "" ? "/": path;
 
                 this.pnfsId = file.pnfsId ? file.pnfsId : "0";
+                if (auth) {
+                    this.authenticationParameters = auth;
+                }
 
                 if (idx === 1) {
                     this.index = -10;
@@ -338,6 +341,7 @@
             }
             _requestAllChildren()
             {
+                //TODO: Readjust this to use worker
                 const namespaceRequest =  new DcacheNamespace();
                 namespaceRequest.auth = app.getAuthValue();
                 const options = {
@@ -428,8 +432,9 @@
             }
             _requestFileMetadata(pnfsId)
             {
+                //TODO: Readjust to use worker.
                 if (pnfsId !== "0") {
-                    fetch(`./api/v1/id/${pnfsId}`, {
+                    /*fetch(`./api/v1/id/${pnfsId}`, {
                         method: 'get',
                         headers: {
                             "Authorization": app.getAuthValue(),
@@ -446,6 +451,28 @@
                     }).catch((err) => {
                         //Fail Quietly
                         this.setProperties({metadata: this._filterMetadata(this.knownMetadata)});
+                    });*/
+
+                    if (this.knownMetadata.flags) {
+                        console.log("ii");
+                        this.setProperties({metadata: this._filterMetadata(this.knownMetadata)});
+                        return;
+                    }
+                    const fileMetaDataWorker = new Worker('./scripts/tasks/file-metadata-task.js');
+                    fileMetaDataWorker.addEventListener('message', (e) => {
+                        //resolve(e.data);
+                        this.setProperties({metadata: this._filterMetadata(e.data)});
+                        fileMetaDataWorker.terminate();
+                    }, false);
+                    fileMetaDataWorker.addEventListener('error', (e)=> {
+                        //Fail Quietly
+                        this.setProperties({metadata: this._filterMetadata(this.knownMetadata)});
+                        fileMetaDataWorker.terminate();
+                    }, false);
+                    fileMetaDataWorker.postMessage({
+                        'endpoint' : `${window.location.origin}${window.CONFIG['dcache-view.endpoints.webapi']}`,
+                        'file' : this.knownMetadata,
+                        'upauth' : this.getAuthValue()
                     });
                 } else {
                     // TODO: user should never hit this block but if they do, make a request for the pnfsID
@@ -454,6 +481,7 @@
             }
             _filterMetadata(metadata)
             {
+                console.log(metadata)
                 delete metadata["locations"];
                 delete metadata["pnfsId"];
                 delete metadata["storageInfo"];

@@ -615,10 +615,19 @@
         if (app.$.metadata.selected === "main") {
             app.removeAllChildren(app.$.metadataDrawer);
             const file = e.detail.file;
-            const fm = file.fileMetaData ?
-                new FileMetadataDashboard(Object.assign({},file.fileMetaData), file.filePath, 0) :
-                new FileMetadataDashboard(Object.assign({},
+            let fm;
+            if (file.fileMetaData) {
+                console.log(file)
+                if (file.macaroon) {
+                    fm = new FileMetadataDashboard(Object.assign({}, file.fileMetaData), file.filePath, 0,
+                        {"scheme": "Bearer", "value": file.macaroon});
+                } else {
+                    fm = new FileMetadataDashboard(Object.assign({}, file.fileMetaData), file.filePath, 0);
+                }
+            } else {
+                fm = new FileMetadataDashboard(Object.assign({},
                     app.$.homedir.querySelector('view-file').currentDirMetaData), file.filePath, 1);
+            }
             app.$.metadataDrawer.appendChild(fm);
             app.$.metadata.openDrawer();
         } else {

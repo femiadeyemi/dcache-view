@@ -8,7 +8,7 @@ self.addEventListener('message', function(e) {
     });
     let partialFileMetadata;
 
-    if (e.data.preference && e.data.preference.authentication.type) {
+    /*if (e.data.preference && e.data.preference.authentication.type) {
         switch (e.data.preference.authentication.type) {
             case "username-password":
                 headers.append("Authorization", `${e.data.preference.authentication.value}`);
@@ -18,6 +18,9 @@ self.addEventListener('message', function(e) {
                 break;
             default:
         }
+    }*/
+    if (e.data.upauth && e.data.upauth !== "") {
+        headers.append("Authorization", `${e.data.upauth}`);
     }
     if (e.data.file) {
         if (!e.data.file.pnfsId && e.data.file.filePath) {
@@ -46,7 +49,7 @@ self.addEventListener('message', function(e) {
     }
 
     function full(pnfsId) {
-        const request = new Request(`${endpoint}/id/${pnfsId}`, {
+        const request = new Request(`${endpoint}id/${pnfsId}`, {
             headers: headers
         });
         return fetch(request).then((response) => {
@@ -63,6 +66,7 @@ self.addEventListener('message', function(e) {
         });
     }
     function partial(path) {
+        //FIXME: add limit to the children size
         const request = new Request(`${endpoint}namespace${path}?children=true&qos=true`, {
             headers: headers
         });
