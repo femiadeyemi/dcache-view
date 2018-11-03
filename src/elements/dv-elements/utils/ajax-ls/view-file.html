@@ -100,7 +100,7 @@
     </template>
 
     <script>
-        class ViewFile extends DcacheViewMixins.Commons(Polymer.Element)
+        class ViewFile extends DcacheViewMixins.Namespace(DcacheViewMixins.Commons(Polymer.Element))
         {
             constructor(path)
             {
@@ -403,19 +403,13 @@
                     'offset' : this.__counter__ * 100,
                     'upauth' : this.getAuthValue()
                 };
-
-                const fileMetaDataWorker = new Worker('./scripts/tasks/file-metadata-task.js');
-                fileMetaDataWorker.addEventListener('message', (e) => {
-                    this.handleResponse(e.data);
-                    fileMetaDataWorker.terminate();
+                this.fileMetadataPromise(message).then(metadata => {
+                    this.handleResponse(metadata);
                     this.loading = false;
-                }, false);
-                fileMetaDataWorker.addEventListener('error', (err) => {
-                    fileMetaDataWorker.terminate();
-                    this.handleError(err.message);
+                }).catch(error => {
+                    this.handleError(error.message);
                     this.loading = false;
-                }, false);
-                fileMetaDataWorker.postMessage(message);
+                })
             }
 
             _multipleSelectionShortcuts(event)

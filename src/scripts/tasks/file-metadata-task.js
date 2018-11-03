@@ -85,15 +85,9 @@ self.addEventListener('message', function(e) {
     }
 
     function full(pnfsId) {
-        const request = new Request(`${endpoint}id/${pnfsId}`, {
-            headers: headers
-        });
-        return fetch(request).then((response) => {
-            if (!response.ok) {
-                throw JSON.stringify({status: response.status, message: response.statusText});
-            }
-            return response.json();
-        }).catch((err) => {
+        return fetchRequest(
+            new Request(`${endpoint}id/${pnfsId}`, {headers: headers})
+        ).catch((err) => {
             if (partialFileMetadata) {
                 return partialFileMetadata;
             }
@@ -101,10 +95,12 @@ self.addEventListener('message', function(e) {
         });
     }
     function partial(path) {
-        const request = new Request(
+        return fetchRequest(new Request(
             `${endpoint}namespace${path}?children=true&offset=${offset}&limit=${limit}&qos=${qos}`, {
-                headers: headers});
-        return fetch(request).then((response) => {
+                headers: headers}));
+    }
+    function fetchRequest(req) {
+        return fetch(req).then((response) => {
             if (!response.ok) {
                 throw JSON.stringify({status: response.status, message: response.statusText})
             }
