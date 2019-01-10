@@ -3,22 +3,22 @@ dCache View
 
 ### Table of Contents
 
-0. [Introduction](#Introduction)
-1. [Getting Started](#Getting-Started)
+1. [Introduction](#Introduction)
+2. [Getting Started](#Getting-Started)
     - [Prerequisites](#Prerequisites)
     - [Build](#Build)
     - [Update](#Update)
-2. [Features](#Features)
+3. [Features](#Features)
     - [List of available Features]()
     - [Upcoming Features]()
     - [How to request a Feature]()
-3. [How to ...](#How-To)
+4. [How to ...](#How-To)
     - [make dCache View aware of the OpenID set up](docs/how-tos/open-id.md)
-3. [Versioning](#Versioning)
-4. [Contributors](#Contributors)
-5. [How to contribute](#How-to-contribute)
-6. [License](#License)
-7. [Acknowledgments](#Acknowledgments)
+5. [Versioning](#Versioning)
+6. [Contributors](#Contributors)
+7. [How to contribute](#How-to-contribute)
+8. [License](#License)
+9. [Acknowledgments](#Acknowledgments)
 
 
 ## Introduction
@@ -28,9 +28,9 @@ provide user interface for dCache to the end users, which enable users to intera
 dCache storage system effortlessly. 
 
 To see how dCache View look like and to have a feel about the application, try our live 
-test machine called [Prometheus](https://prometheus.desy.de:3880). This is a small dCache 
-instance running the latest development build of dCache with the latest released version 
-of dCache View.
+test machine called [Prometheus](https://prometheus.desy.de:3880). This test machine is 
+a small dCache instance running the latest development build of dCache with the latest 
+released version of dCache View.
 
 ## Getting Started
 
@@ -39,16 +39,18 @@ in dCache. It uses the RESTful API in the frontend for most of the namespace ope
 Also, it uses [WebDAV services](https://www.dcache.org/manuals/Book-5.0/config-frontend.shtml) 
 for macaroon, read operation, write operation etc. 
 
-A running dCache instance comes with dCache View. If you are running a system test, you can skip this 
-process, since the default layout in system test come with frontend services running on different ports. 
-In this case, dCache View will be running in these following: http://localhost:3880/ and https://localhost:3881/.
+A running dCache instance comes with dCache View. If you are running a system test, you can 
+skip this process, since the default layout in system test come with frontend services running 
+on different ports. In this case, dCache View will be running in these following: 
+http://localhost:3880/ and https://localhost:3881/.
 
-However, if you are interested in other packages apart from the system test, enabling dCache View is as 
-simple as starting or adding a frontend service/door to your dCache domain. Say for example, you have 
-a single domain called `dCacheDomain`, inside your layout file, which should be located at 
-`/etc/dcache/layouts/<name-of-your-layout-file>.conf`. To add the frontend service just add the following: 
-`[dCacheDomain/frontend]` also don't forget to add the WebDAV door, as pointed earlier dCache View relies on 
-it. Finally, restart your dCache instance. Hence, your layout file should look like this:
+However, if you are interested in other packages apart from the system test, enabling dCache View 
+is as simple as starting or adding a frontend service/door to your dCache domain. Say for example, 
+you have a single domain called `dCacheDomain`, inside your layout file, which should be located 
+at `/etc/dcache/layouts/<name-of-your-layout-file>.conf`. To add the frontend service just add the 
+following: `[dCacheDomain/frontend]` also don't forget to add the WebDAV door, as pointed earlier 
+dCache View relies on it. Finally, restart your dCache instance. Hence, your layout file should 
+look like this:
 
 ```text
 [dCacheDomain]
@@ -69,15 +71,15 @@ it. Finally, restart your dCache instance. Hence, your layout file should look l
 ```
 
 By default, dCache View is served from port 3880 but this is configurable 
-(see [dCache book](https://www.dcache.org/manuals/book.shtml) for full details on what and how to configure 
-all the necessary properties for both webDAV and frontend door).
+(see [dCache book](https://www.dcache.org/manuals/book.shtml) for full details on what and how 
+to configure all the necessary properties for both webDAV and frontend door).
 
 
 Ideally, the top of all the supported branches in dCache View [repository](https://github.com/dCache/dcache-view) 
-are production ready. If you are brave and want to live on the hedge or fiddle around with the source code, you 
-can run the latest version of dCache View but first you need to make sure you have [these](#Prerequisites) ready. 
-Next, follow the instruction [here on how to build](#Build) it and lastly, deploy it to your system by doing 
-[this](#Update).
+are production ready. If you are brave and want to live on the hedge or fiddle around with 
+the source code, you can run the latest version of dCache View but first you need to make 
+sure you have [these](#Prerequisites) ready. Next, follow the instruction [here on how to build](#Build) 
+it and lastly, deploy it to your system by doing [this](#Update).
 
 #### Prerequisites
 
@@ -132,6 +134,7 @@ interested in these following files:
     - favicons/
     - scripts/
     - style/
+    
 How to update your dCache instant will depends on where it is, if it local, it is as simple as copying
 those files listed above to `/usr/share/dcache/dcache-view/` or it equivalent. To copy these files and 
 directories from the `target` directory to `/usr/share/dcache/dcache-view/`, in the *terminal* typed:
@@ -150,7 +153,122 @@ to deploy or replaced the files listed above with the newly generated ones.
 
 ## Features
 
-dCache View 
+
+
+#### Available
+
+Here are list of features available inside dCache View
+<table>
+  <tr>
+    <th>#</th>
+    <th>Feature</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>1.</th>
+    <td>Listing & Navigation</th>
+    <td>
+     See the content of a directory with the possibilities of viewing the sub directories as well.
+    </td>
+  </tr>
+  <tr>
+    <td>2.</td>
+    <td>Viewer</td>
+    <td>
+     Content of a file can be displayed in dCache View. At the moment, you can view:
+     <div>
+        <ul>
+          <li>pdf files</li>
+          <li>video files with these file extention: <code>.ogg, .mpeg, .webm and .mp4</code></li>
+          <li>image files with these file extention: <code>.gif, .jpeg, .png, .x-icon and svg+xml</code></li>
+        </ul>
+     </div>
+     <i>More file mime-type will be supported later.</i>
+    </td>
+  </tr>
+  <tr>
+    <td>3.</td>
+    <td>User profile</td>
+    <td>
+    
+    </td>
+  </tr>
+  <tr>
+    <td>4.</td>
+    <td>Authentication & Authorisation</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>5.</td>
+    <td>File Metadata</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>6.</td>
+    <td>Sharing</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>7.</td>
+    <td>Multiple selection</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>8.</td>
+    <td>Keyboard Shortcuts</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>9.</td>
+    <td>Drag and drop</td>
+    <td></td>
+  </tr>
+  <tr>
+  <tr>
+    <td>10.</td>
+    <td>Custom context menu</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>11.</td>
+    <td>Quality of service</td>
+    <td>get the backend capabilities and able to update or modify specific file QoS</td>
+  </tr>
+  <tr>
+    <td>12.</td>
+    <td>Upload</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>13.</td>
+    <td>Move</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>14.</td>
+    <td>Rename</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>15.</td>
+    <td>Download</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>16.</td>
+    <td>Delete</td>
+    <td></td>
+  </tr>
+</table>
+
+#### Upcoming 
+
+List of planned features and their progress
+
+
+#### How to request a feature
+
+If you have any suggestions on our features, please submit feedback on our feature requests [here]().
 
 ## How To
 
@@ -160,7 +278,8 @@ This is a list of
 
 ## Versioning
 
-For the versions available, see the [tags on this repository](https://github.com/dCache/dcache-view/tags). 
+For the versions available, see the [tags on this repository](https://github.com/dCache/dcache-view/tags) 
+for the prebuilds and [the nexus]() for the build ones. 
 
 ## Contributors
 
