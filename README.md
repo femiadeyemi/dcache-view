@@ -190,23 +190,30 @@ Here are list of features available inside dCache View
     <td>3.</td>
     <td>User profile</td>
     <td>
-    
+        Shows detail user information with some few knobs that user can use 
+        to set or remove some certain preferences.
     </td>
   </tr>
   <tr>
     <td>4.</td>
     <td>Authentication & Authorisation</td>
-    <td></td>
+    <td>
+        There are four options of authentication that are currently supported, these are:
+        certificate, openID connect, macaroon and username+password.
+    </td>
   </tr>
   <tr>
     <td>5.</td>
     <td>File Metadata</td>
-    <td></td>
+    <td>
+        See full file's metadata
+    </td>
   </tr>
   <tr>
     <td>6.</td>
     <td>Sharing</td>
-    <td></td>
+    <td>
+    </td>
   </tr>
   <tr>
     <td>7.</td>
