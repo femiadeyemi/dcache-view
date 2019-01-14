@@ -159,113 +159,218 @@ to deploy or replaced the files listed above with the newly generated ones.
 
 Here are list of features available inside dCache View
 <table>
-  <tr>
-    <th>#</th>
-    <th>Feature</th>
-    <th>Description</th>
-  </tr>
-  <tr>
-    <td>1.</th>
-    <td>Listing & Navigation</th>
-    <td>
-     See the content of a directory with the possibilities of viewing the sub directories as well.
-    </td>
-  </tr>
-  <tr>
-    <td>2.</td>
-    <td>Viewer</td>
-    <td>
-     Content of a file can be displayed in dCache View. At the moment, you can view:
-     <div>
-        <ul>
-          <li>pdf files</li>
-          <li>video files with these file extention: <code>.ogg, .mpeg, .webm and .mp4</code></li>
-          <li>image files with these file extention: <code>.gif, .jpeg, .png, .x-icon and svg+xml</code></li>
-        </ul>
-     </div>
-     <i>More file mime-type will be supported later.</i>
-    </td>
-  </tr>
-  <tr>
-    <td>3.</td>
-    <td>User profile</td>
-    <td>
-        Shows detail user information with some few knobs that user can use 
-        to set or remove some certain preferences.
-    </td>
-  </tr>
-  <tr>
-    <td>4.</td>
-    <td>Authentication & Authorisation</td>
-    <td>
-        There are four options of authentication that are currently supported, these are:
-        certificate, openID connect, macaroon and username+password.
-    </td>
-  </tr>
-  <tr>
-    <td>5.</td>
-    <td>File Metadata</td>
-    <td>
-        See full file's metadata
-    </td>
-  </tr>
-  <tr>
-    <td>6.</td>
-    <td>Sharing</td>
-    <td>
-    </td>
-  </tr>
-  <tr>
-    <td>7.</td>
-    <td>Multiple selection</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>8.</td>
-    <td>Keyboard Shortcuts</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>9.</td>
-    <td>Drag and drop</td>
-    <td></td>
-  </tr>
-  <tr>
-  <tr>
-    <td>10.</td>
-    <td>Custom context menu</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>11.</td>
-    <td>Quality of service</td>
-    <td>get the backend capabilities and able to update or modify specific file QoS</td>
-  </tr>
-  <tr>
-    <td>12.</td>
-    <td>Upload</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>13.</td>
-    <td>Move</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>14.</td>
-    <td>Rename</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>15.</td>
-    <td>Download</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>16.</td>
-    <td>Delete</td>
-    <td></td>
-  </tr>
+    <tr>
+        <th>#</th>
+        <th>Feature</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>1.</td>
+        <td>Listing & Navigation</td>
+        <td>
+            See the content of a directory with the possibilities of viewing the sub directories
+            as well. Double-click any directory or right-click on it and select <b>open</b> from
+            the context menu to view its contents.
+        </td>
+    </tr>
+    <tr>
+        <td>2.</td>
+        <td>Viewer</td>
+        <td>
+            Quickly see the content of a file inside dCache View with built-in viewer. To view
+            the content of a file, simply click on it and right-click or just right-click and
+            select <b>view</b>, <b>play</b> or <b>open</b> (this depends on the type of file).
+            <p>At the moment, you can view:</p>
+            <div>
+                <ul>
+                    <li>
+                        Portable Document Format file, that is, files with .pdf extension
+                    </li>
+                    <li>
+                        video files with these file extension:
+                        <code>.ogg, .mpeg, .webm and .mp4</code>
+                    </li>
+                    <li>
+                        image files with these file extension:
+                        <code>.gif, .jpeg, .png, .x-icon and svg+xml</code>
+                    </li>
+                </ul>
+            </div>
+            <small>More file mime-types will be supported later.</small>
+        </td>
+    </tr>
+    <tr>
+        <td>3.</td>
+        <td>Authentication & Authorisation</td>
+        <td>
+            There are four options of authentication that are currently supported, these
+            are: certificate, openID connect, macaroon and username+password.
+        </td>
+    </tr>
+    <tr>
+        <td>4.</td>
+        <td>File Metadata</td>
+        <td>
+            Get more details and information about a file or directory properties.
+            To view the file Metadata, right-click the file and select <b>View details</b>
+            from the context menu. You can also select the file and click info button.
+            The file metadata dashboard will be open with the file's properties inside
+            it, user can decide to view it in raw or formatted form.
+        </td>
+    </tr>
+    <tr>
+        <td>5.</td>
+        <td>Create directory</td>
+        <td>
+            Create an empty directory. Either by clicking the create button or
+            right-click inside the directory that will serve as the parent and select
+            <b>create new directory</b> from the context menu.
+        </td>
+    </tr>
+    <tr>
+        <td>6.</td>
+        <td>Upload</td>
+        <td>
+            Upload file/s or directory/ies (depending on the browser) into a directory.
+            This can be done by either dragging the file/s and dropping it into the
+            desired directory or by using the upload button, which allow user to select
+            one or more files from their device storage.
+        </td>
+    </tr>
+    <tr>
+        <td>7.</td>
+        <td>Move</td>
+        <td>
+            Change the parent of one or more files by either dragging the selected file
+            into the destination directory (which will be the new parent), or by clicking
+            the move button, which will be shown only if file/s are selected.
+        </td>
+    </tr>
+    <tr>
+        <td>8.</td>
+        <td>Rename</td>
+        <td>
+            Rename a file or folder. Right-click on the file and select <b>Rename</b>
+            from the context menu. When you rename a file, only the first part of the
+            name of the file is selected, not the file extension (the part after the
+            last .) and you usually do not want to change that. If you need to change
+            the extension as well, select the entire file name and change it. The
+            following are worth noting:
+            <ol>
+                <li>
+                    You can use any character except the / (slash) character in file names.
+                </li>
+                <li>
+                    You cannot have two files or directory with the same name in the same
+                    directory. If you try to rename a file to a name that already exists
+                    in the folder you are working in, dCache will not allow it.
+                </li>
+                <li>
+                    File and directory names are case sensitive, so the file name File.txt
+                    is not the same as FILE.txt.
+                </li>
+            </ol>
+        </td>
+    </tr>
+    <tr>
+        <td>9.</td>
+        <td>Download</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>10.</td>
+        <td>Delete</td>
+        <td>
+            Deleting a file remove it in a directory. Select the item you want delete by
+            clicking it once (use can use multiple selection if you want to do ).
+            <p>An empty directory and
+                single file may be deleted. This feature is available by selecting
+                the file(s) </p>
+        </td>
+    </tr>
+    <tr>
+        <td>11.</td>
+        <td>Sharing</td>
+        <td>
+            Send files to anyone, even if they don’t have a Dropbox account.
+            Files you share using Dropbox always stay up-to-date, letting you
+            and your team stay on the same page.
+        </td>
+    </tr>
+    <tr>
+        <td>12.</td>
+        <td>Context menu</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>13.</td>
+        <td>
+            <p>Keyboard Shortcuts</p>
+            <p>&</p>
+            <p>Multiple selection</p>
+        </td>
+        <td>
+            Support shortcuts for multiple selection, like:
+            <table>
+                <tr>
+                    <td>key combination</td>
+                    <td>result</td>
+                </tr>
+                <tr>
+                    <td>Click on a file + up arrow key</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Click on a file + down arrow key</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Control (or Command for Mac) key + mouse click</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        Shift key + mouse click
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        Shift or Control (or Command for Mac) key with the up arrow key
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>
+                        Shift or Control (or Command for Mac) key with the down arrow key
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>14.</td>
+        <td>Drag and drop</td>
+        <td></td>
+    </tr>
+    <tr>
+    <tr>
+        <td>15.</td>
+        <td>Quality of service</td>
+        <td>
+            View the backend capabilities by right-clicking inside
+            and able to update or modify specific file QoS
+        </td>
+    </tr>
+    <tr>
+        <td>16.</td>
+        <td>User profile</td>
+        <td>
+            Shows detail user information with some few knobs that user can use
+            to set or remove some certain preferences.
+        </td>
+    </tr>
 </table>
 
 #### Upcoming 
