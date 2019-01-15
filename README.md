@@ -12,8 +12,9 @@ dCache View
     - [List of available Features]()
     - [Upcoming Features]()
     - [How to request a Feature]()
-4. [How to ...](#How-To)
+4. [How to](#How-To)
     - [make dCache View aware of the OpenID set up](docs/how-tos/open-id.md)
+    - [share a file and view a shared file](docs/how-tos/share-file.md)
 5. [Versioning](#Versioning)
 6. [Contributors](#Contributors)
 7. [How to contribute](#How-to-contribute)
@@ -321,6 +322,10 @@ Here are list of features available inside dCache View
                 a Shared File</b>" dialog box will be shown, paste the macaroon
                 inside the text box and click the add button.
             </p>
+            <small>
+                See <a href="">how to share and view shared files</a> for more 
+                details.
+            </small>
         </td>
     </tr>
     <tr>
@@ -419,6 +424,7 @@ If you have any suggestions on our features, please submit feedback on our featu
 This is a list of 
 
 - [make dCache View aware of the OpenID set up](docs/how-tos/open-id.md)
+- [share a file and view a shared file](docs/how-tos/share-file.md)
 
 ## Versioning
 
