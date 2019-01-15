@@ -50,9 +50,9 @@ diving into a pull request.
 When submitting pull requests, please make sure your commit message contains enough 
 contextual information. Please provide the following:
 
- 1. **Short summary of the changes**. This should be fewer than 60 characters or 
-  less and must be in a single line. Start the line with "Fix", "Add", "Change"  
-  instead of "Fixed", "Added", "Changed". Note, leave the second line blank.
+ 1. **Short summary of the changes** - This should be fewer than 60 characters or 
+ less and it must be in a single line. Start the line with 'Fix', 'Add', 'Change'
+ instead of 'Fixed', 'Added', 'Changed'.
  
  2. **Motivation** - Explain the reason for this patch. What problem are you 
  trying to solve or what feature are trying to add. Basically, this section 
