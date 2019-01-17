@@ -9,9 +9,9 @@ dCache View
     - [Build](#Build)
     - [Update](#Update)
 3. [Features](#Features)
-    - [List of available Features]()
-    - [Upcoming Features]()
-    - [How to request a Feature]()
+    - [List of available Features](#Available)
+    - [Upcoming Features](#Upcoming)
+    - [How to request a Feature](#How-to-request-a-feature)
 4. [How to](#How-To)
     - [make dCache View aware of the OpenID set up](docs/how-tos/open-id.md)
     - [share a file and view a shared file](docs/how-tos/share-file.md)
@@ -28,22 +28,24 @@ dCache View is a web application client for [dCache](https://dcache.org). Basica
 provide user interface for dCache to the end users, which enable users to interact with 
 dCache storage system effortlessly. 
 
-To see how dCache View look like and to have a feel about the application, try our live 
+To see how dCache View looks like and to have a feel about the application, try our live 
 test machine called [Prometheus](https://prometheus.desy.de:3880). This test machine is 
 a small dCache instance running the latest development build of dCache with the latest 
 released version of dCache View.
 
 ## Getting Started
 
-dCache View is part of [Frontend service](https://www.dcache.org/manuals/Book-5.0/config-frontend.shtml) 
-in dCache. It uses the RESTful API in the frontend for most of the namespace operation. 
-Also, it uses [WebDAV services](https://www.dcache.org/manuals/Book-5.0/config-frontend.shtml) 
-for macaroon, read operation, write operation etc. 
+dCache View is part of [frontend service](https://www.dcache.org/manuals/Book-5.0/config-frontend.shtml) 
+in dCache. It uses the frontend's [RESTful API](https://prometheus.desy.de:3880/api/v1/) 
+for the namespace operation and other communication with dCache. In addition to the frontend 
+service, dCache View uses the [webDAV services](https://www.dcache.org/manuals/Book-5.0/config-frontend.shtml) 
+for generating macaroons, to perform read and write operation etc. 
 
-A running dCache instance comes with dCache View. If you are running a system test, you can 
-skip this process, since the default layout in system test come with frontend services running 
-on different ports. In this case, dCache View will be running in these following: 
-http://localhost:3880/ and https://localhost:3881/.
+A running dCache instance comes with dCache View. For example, if you are running a 
+system test, all the basic functionality were already set up for you. It worth noting 
+that the system test have quite a few frontend services, which runs on different ports. 
+Hence, you can view dCache View at http://localhost:3880/ and https://localhost:3881/. 
+Also, you can skip the rest of this part and jump to [how to build](#Build) dCache View.
 
 However, if you are interested in other packages apart from the system test, enabling dCache View 
 is as simple as starting or adding a frontend service/door to your dCache domain. Say for example, 
@@ -77,8 +79,8 @@ to configure all the necessary properties for both webDAV and frontend door).
 
 
 Ideally, the top of all the supported branches in dCache View [repository](https://github.com/dCache/dcache-view) 
-are production ready. If you are brave and want to live on the hedge or fiddle around with 
-the source code, you can run the latest version of dCache View but first you need to make 
+are production ready. If you are brave and want to live on the hedge or (and) fiddle around with 
+the source code; you can run the latest version of dCache View but first you need to make 
 sure you have [these](#Prerequisites) ready. Next, follow the instruction [here on how to build](#Build) 
 it and lastly, deploy it to your system by doing [this](#Update).
 
