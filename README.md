@@ -7,7 +7,7 @@ dCache View
 2. [Getting Started](#Getting-Started)
     - [Prerequisites](#Prerequisites)
     - [Build](#Build)
-    - [Update](#Update)
+    - [Update](#Update/Deployment)
 3. [Features](#Features)
     - [List of available Features](#Available)
     - [Upcoming Features](#Upcoming)
@@ -24,9 +24,9 @@ dCache View
 
 ## Introduction
 
-dCache View is a web application client for [dCache](https://dcache.org). Basically, it 
-provide user interface for dCache to the end users, which enable users to interact with 
-dCache storage system effortlessly. 
+dCache View is a web application client for [dCache](https://dcache.org) storage system. 
+Basically, it provide user interface to the end users using dCache and enable them to 
+interact with dCache storage system effortlessly. 
 
 To see how dCache View looks like and to have a feel about the application, try our live 
 test machine called [Prometheus](https://prometheus.desy.de:3880). This test machine is 
@@ -35,25 +35,28 @@ released version of dCache View.
 
 ## Getting Started
 
-dCache View is part of [frontend service](https://www.dcache.org/manuals/Book-5.0/config-frontend.shtml) 
-in dCache. It uses the frontend's [RESTful API](https://prometheus.desy.de:3880/api/v1/) 
-for the namespace operation and other communication with dCache. In addition to the frontend 
-service, dCache View uses the [webDAV services](https://www.dcache.org/manuals/Book-5.0/config-frontend.shtml) 
+dCache View is part of dCache's [frontend service](https://www.dcache.org/manuals/Book-5.0/config-frontend.shtml). 
+Also, it uses the frontend's [RESTful API](https://prometheus.desy.de:3880/api/v1/) for the 
+namespace operations and to communication with dCache. In addition to the frontend service, 
+dCache View uses the dCache's [webDAV services](https://www.dcache.org/manuals/Book-5.0/config-frontend.shtml) 
 for generating macaroons, to perform read and write operation etc. 
 
-A running dCache instance comes with dCache View. For example, if you are running a 
-system test, all the basic functionality were already set up for you. It worth noting 
-that the system test have quite a few frontend services, which runs on different ports. 
-Hence, you can view dCache View at http://localhost:3880/ and https://localhost:3881/. 
-Also, you can skip the rest of this part and jump to [how to build](#Build) dCache View.
+A running dCache instance comes with dCache View. For instant, if you are running a 
+system-test, all the basic functionality (that will make dCache works out of the box) 
+were already set-up for you. It worth mentioning that, the system test have quite a 
+few frontend services, which runs on different ports. Hence, you can view dCache View 
+at http://localhost:3880/ and https://localhost:3881/. 
 
-However, if you are interested in other packages apart from the system test, enabling dCache View 
+__NOTE: You can skip the rest of this part and jump to [how to build](#Build) dCache 
+View, if you are running the system-test package.__
+
+However, if you are interested in other packages apart from the system-test, enabling dCache View 
 is as simple as starting or adding a frontend service/door to your dCache domain. Say for example, 
 you have a single domain called `dCacheDomain`, inside your layout file, which should be located 
 at `/etc/dcache/layouts/<name-of-your-layout-file>.conf`. To add the frontend service just add the 
-following: `[dCacheDomain/frontend]` also don't forget to add the WebDAV door, as pointed earlier 
-dCache View relies on it. Finally, restart your dCache instance. Hence, your layout file should 
-look like this:
+following: `[dCacheDomain/frontend]`. Also don't forget to add the WebDAV door, as pointed out 
+earlier dCache View relies on it. Finally, restart your dCache instance. Hence, your layout file 
+should look like this:
 
 ```text
 [dCacheDomain]
@@ -81,8 +84,9 @@ to configure all the necessary properties for both webDAV and frontend door).
 Ideally, the top of all the supported branches in dCache View [repository](https://github.com/dCache/dcache-view) 
 are production ready. If you are brave and want to live on the hedge or (and) fiddle around with 
 the source code; you can run the latest version of dCache View but first you need to make 
-sure you have [these](#Prerequisites) ready. Next, follow the instruction [here on how to build](#Build) 
-it and lastly, deploy it to your system by doing [this](#Update).
+sure you have [the prerequisites listed here](#Prerequisites) ready. Next, follow the instruction 
+described [here on how to build](#Build) dCache View and lastly, deploy it to your system by doing 
+what was highlighted [here](#Update/Deployment).
 
 #### Prerequisites
 
@@ -116,19 +120,32 @@ it and lastly, deploy it to your system by doing [this](#Update).
 Once you've make sure all the prerequisites requirements are met, open your *terminal* and do 
 the following:
 
-- change directory to the directory where you forked/downloaded dCache View: 
+- *change directory* to the directory where you forked/downloaded dCache View: 
     ```sbtshell
     cd <path-to-directory>/dcache-view
     ```
-- build 
+- next, *build* with this command
     ```sbtshell
     mvn clean package
     ```
-    
-#### Update
+
+Ensure that the build was successful before you move to the next step, that is, update/deployment. 
+To check if it is successful, you should something similar to what is below inside your terminal:
+
+```sbtshell
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 58.926 s
+[INFO] Finished at: 2019-01-23T15:41:07+01:00
+[INFO] Final Memory: 11M/213M
+[INFO] ------------------------------------------------------------------------
+```    
+
+#### Update/Deployment
 
 After a successful build, directory name `target` will be created inside `dcache-view` folder. We are 
-interested in these following files:
+interested in these following generated files/directories:
 
     - index.html
     - robots.txt
@@ -138,8 +155,9 @@ interested in these following files:
     - scripts/
     - style/
     
-How to update your dCache instant will depends on where it is, if it local, it is as simple as copying
-those files listed above to `/usr/share/dcache/dcache-view/` or it equivalent. To copy these files and 
+How to update (or deploy) dCache View in (or into) your dCache instance will depends on where it is. 
+If it is a locally running dCache instance, it is as simple as copying those files/directories listed 
+above to `/usr/share/dcache/dcache-view/` or the equivalent of this path. To copy these files and 
 directories from the `target` directory to `/usr/share/dcache/dcache-view/`, in the *terminal* typed:
   ```sbtshell
   rm -rf /usr/share/dcache/dcache-view/* && mv -v <path-to-dir>/dcache-view/target/* /usr/share/dcache/dcache-view/
@@ -156,7 +174,8 @@ to deploy or replaced the files listed above with the newly generated ones.
 
 ## Features
 
-
+dCache View comes with many features. Here we'll highlight several of these features that are already 
+shipped. Also, a list of planned features and their progress will be provided. 
 
 #### Available
 
@@ -451,3 +470,5 @@ The project is licensed under __AGPL v3__ - see the [LICENSE.md](LICENSE.md) fil
 
 
 ## Acknowledgments
+
+The team thank Onno Zweers from surfSARA for his contributions.
